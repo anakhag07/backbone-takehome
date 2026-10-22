@@ -62,27 +62,27 @@ Text-matched headers → LLM claims → cached patient events, plans, assessment
 
 Eager extracts and reconciles documents upfront; lazy indexes text first, then caches generic notes when questions need them. Eager is the default for lower question-time latency.
 
-Saved result snapshots: [eager answers](results/eager-answers.json) · [lazy answers](results/lazy-answers-partial.json) · [full benchmark](docs/benchmark.md#fresh-and-cached-runs) · [recorded metrics](benchmark-results.json).
+Saved result snapshots: [eager answers](results/eager-answers.json) · [lazy answers](results/lazy-answers.json) · [full benchmark](docs/benchmark.md#fresh-and-cached-runs) · [recorded metrics](benchmark-results.json).
 
 **Fresh documents — initially empty caches; 31 documents**
 
 | Strategy | Document processing | Patient question, mean | Collection question |
 | --- | ---: | ---: | ---: |
 | Eager | 178.680 s | 12.723 s (5 questions) | 14.714 s |
-| Lazy | 0.079 s, text indexing | Failed: HTTP 429 | Not reached |
+| Lazy | 0.070 s, text indexing | 76.290 s (5 questions) | 30.395 s |
 
 **Cached documents and answers — exact replay**
 
 | Strategy | Document processing | Patient question, mean | Collection question |
 | --- | ---: | ---: | ---: |
 | Eager | 0.053 s | 0.0075 s (5 questions) | 0.0084 s |
-| Lazy | 0.187 s | 0.0084 s (2 questions) | Unavailable |
+| Lazy | 0.146 s | 0.0084 s (5 questions) | 0.0085 s |
 
-The fresh lazy retry failed before document parsing; a follow-up API diagnostic confirmed exhausted credits. Replay reuses earlier saved answers; lazy replay remains partial. The collection contains one chart patient, so cross-patient performance is unmeasured.
+Both runs produced six answers; three lazy answers retain unresolved qualifications. Lazy’s first answer took **260.710 s**, including **230.064 s** parsing all 31 documents (0% parsed initially; 100% for later questions). Replay reuses saved answers with zero API calls. The collection has one chart patient; cross-patient scaling is unmeasured.
 
 ## 3. Approach and tradeoffs
 
-1. **Decision:** Use eager when there is time between document upload and questions. On the same two new questions with documents already parsed, eager averaged **15.27 s** versus lazy's **22.75 s**.
+1. **Decision:** Use eager when there is time between document upload and questions. On the same four new questions with documents already parsed, eager averaged **12.70 s** versus lazy's **30.19 s**.
 2. **Limitations:** No automatic semantic correction loop: incorrect or out-of-context extractions can persist. The schema favors current question types; supporting new types may require re-extraction and more question-time LLM processing.
 3. **At one million documents:** SQLite already stores data on disk; its single-writer limit constrains concurrent uploads. Our full-corpus scan would touch approximately **32,000× more documents** than this 31-document sample—an operation-count estimate, not measured latency. Replace full-corpus RAM loading with incremental intake and indexed reads; use a server database if write concurrency requires it.
 

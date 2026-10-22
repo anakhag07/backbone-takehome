@@ -1,6 +1,6 @@
 # Benchmark
 
-Measured October 22, 2026 using `gpt-5.6-terra`, reasoning effort `medium`, on 31 documents totaling 50,106 bytes. The corpus contains one chart patient. The five supplied questions are individual-patient questions; one explicitly labeled collection-wide question was added. [Machine-readable results](../benchmark-results.json) retain every attempt, code revision, usage record summary, and artifact path.
+Measured October 22, 2026 using `gpt-5.6-terra`, reasoning effort `medium`, on 31 documents totaling 50,106 bytes. The five supplied questions concern one chart patient; one collection-wide question was added. [Recorded metrics](../benchmark-results.json) preserve every attempt, code revision, usage summary, and artifact path.
 
 ## Measured results
 
@@ -11,69 +11,63 @@ Measured October 22, 2026 using `gpt-5.6-terra`, reasoning effort `medium`, on 3
 | Strategy | Document processing | Patient question, mean | Collection question |
 | --- | ---: | ---: | ---: |
 | Eager | 178.680 s | 12.723 s (5 questions) | 14.714 s |
-| Lazy | 0.079 s, text indexing | Failed: HTTP 429 | Not reached |
+| Lazy | 0.070 s, text indexing | 76.290 s (5 questions) | 30.395 s |
+
+Lazy's first question took **260.710 s**, including **230.064 s** to parse all 31 documents. It started with **0% parsed**; the remaining questions started with **100% parsed**. Eager parsed everything before answering. Initial processing averaged **5.764 s/document** for eager versus **0.00225 s/document** for lazy's text indexing only.
 
 **Cached documents and answers — exact replay**
 
 | Strategy | Document processing | Patient question, mean | Collection question |
 | --- | ---: | ---: | ---: |
 | Eager | 0.053 s | 0.0075 s (5 questions) | 0.0084 s |
-| Lazy | 0.187 s | 0.0084 s (2 questions) | Unavailable |
+| Lazy | 0.146 s | 0.0084 s (5 questions) | 0.0085 s |
 
-The fresh lazy row uses the [latest retry](../results/lazy-retry-summary.json): its first API request returned HTTP 429, before document parsing. Replay reuses earlier saved answers; cached figures remain the eager replay and lazy partial offline replay in [the recorded metrics](../benchmark-results.json). The collection contains one chart patient, so cross-patient performance is unmeasured.
+Replay reuses saved answers and makes no model calls. Lazy uses the latest replay after a citation-display fix; the first complete replay is also retained in the recorded metrics. Both strategies completed all six questions: eager's cold/replay runs took **260.907/0.150 s** overall; lazy's took **411.931/0.201 s**. Completion means processing succeeded: lazy's minute, weekly-goal, and collection answers retain a substantive `partial` status because the evidence does not settle every conclusion. The collection still contains only one chart patient, so cross-patient scaling is unmeasured.
 
-### New-answer comparison
+### New answers with documents already parsed
 
-These are historical phase timings from the earlier runs described below, **not two successful cold end-to-end runs**. The new retry produced no additional answers.
+These four questions began with **100% of active and selected documents parsed**, but their answers were uncached.
 
-| Measurement | Eager | Deferred (`lazy`) |
+| Question | Eager | Lazy |
 | --- | ---: | ---: |
-| Fresh initial processing | 178.680 s | 0.061 s, text index only |
-| Initial processing per document | 5.764 s | 0.00196 s |
-| DEV-01, uncached answer with documents already parsed | 12.833 s | 18.092 s |
-| DEV-02, uncached answer with documents already parsed | 17.705 s | 27.404 s |
-| Mean of those same two questions | **15.269 s** | **22.748 s** |
-| Mean across all five supplied questions | 12.723 s | Unavailable: only two completed |
-| Supplemental collection-wide question | 14.714 s | Unavailable: HTTP 429 stopped the run earlier |
-| Saved abstraction after all document readings | 400,611 bytes | 419,330 bytes |
+| DEV-02 | 17.705 s | 29.248 s |
+| DEV-03 | 11.077 s | 48.643 s |
+| DEV-04 | 11.307 s | 18.893 s |
+| DEV-05 | 10.694 s | 23.958 s |
+| **Mean** | **12.696 s** | **30.185 s** |
 
-All completed questions above started with **100% of active and selected documents parsed**. Eager shared scope planning took 3.81 s and is separate from question latency. Lazy includes routing in question latency; DEV-01's route was already cached from an earlier attempt. Lazy routing for DEV-02 was uncached. This comparison includes those implementation differences.
+Eager's shared scope planning took 3.81 s and is separate from question latency; lazy includes per-question routing. Lazy DEV-03 includes one rejected citation reference and a successful bounded repair. The earlier two-question warm-document comparison (15.269 s eager; 22.748 s lazy) remains recorded as a separate historical sample.
 
-Eager completed its cold run in **260.907 s**. Its exact six-question offline replay took **0.150 s** with zero model calls. Lazy replayed its two saved answers with zero calls, then correctly stopped on the missing DEV-03 route; it has no complete six-question replay measurement.
+The saved abstractions contain **400,611 bytes** for eager and **422,572 bytes** for lazy; database files contain **688,128** and **626,688 bytes**, respectively.
 
 ## Model usage and cost
 
 | Attempt | Model calls | Mean SDK call time | Input tokens | Output tokens | Estimated cost |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Eager completed cold run | 38 | 6.836 s | 748,371 | 33,477 | $2.12783 |
+| Lazy completed cold run | 44 | 9.333 s | 439,392 | 52,954 | $1.72111 |
 | Lazy first cold attempt, failed | 33 | 7.534 s | 68,629 | 34,530 | $0.57262 |
-| Lazy two-answer continuation, then HTTP 429 | 4, including one failed | 12.286 s | 111,434 reported | 5,979 reported | Unknown total; $0.35033 known subtotal |
-| Lazy latest fresh retry, HTTP 429 | 1, failed | 4.941 s | Unreported | Unreported | Unknown |
+| Lazy earlier two-answer continuation, then HTTP 429 | 4, including one failed | 12.286 s | 111,434 reported | 5,979 reported | Unknown total; $0.35033 known subtotal |
+| Lazy earlier fresh retry, HTTP 429 | 1, failed | 4.941 s | Unreported | Unreported | Unknown |
 
-Eager used 62,940 cached input tokens. The lazy continuation's three successful calls averaged **14.956 s**; its fourth call returned no usage, so the full cost is `null`. A model call is one measured SDK invocation, including SDK retry time; it is not necessarily one HTTP attempt. A question may cause routing, several document readings, answering, an original-source reread, or citation repair. Exact cached answers need no model calls.
+The completed lazy run used **31 document readings + 6 routing calls + 6 answers + 1 citation repair**. One answer response failed local reference validation; its successful repair, latency, and cost are included. All 44 calls reported usage. Eager used 62,940 cached input tokens; lazy reported none. A model call measures an SDK invocation, including internal retries; one question can cause several calls. Exact replays used zero calls.
 
-Costs are token-based estimates using [published pricing](https://developers.openai.com/api/docs/models/gpt-5.6-terra), verified October 22, 2026: $2/M input, $0.20/M cached input, and $12/M output, with the cache-write and long-context multipliers when applicable. Actual billed costs are unavailable. The eager five-question answer stage cost an estimated $1.44989, or $0.29/question, excluding intake and shared planning. Each attempt's separate cost is retained; failed attempts are not silently included in a successful-run figure.
+Costs are token-based estimates using [published pricing](https://developers.openai.com/api/docs/models/gpt-5.6-terra), verified October 22, 2026: $2/M input, $0.20/M cached input, and $12/M output, with applicable cache-write and long-context multipliers. Actual billed costs are unavailable. Earlier failed attempts remain separate from the successful-run figures.
 
 ## Interruptions and interpretation
 
-The first lazy cold run indexed text in 0.061 s, then spent **219.971 s** reading all 31 documents for DEV-01. Its **248.850 s attempted-question duration ended in citation validation failure** and is not a completed-answer latency. A quotation-copy correction attempt also failed. The answer adapter now selects labeled evidence IDs; Python resolves them into source quotations. A second fresh run stopped during document reading because of an added quotation wrapper; deterministic normalization now removes only a matching wrapper whose inner text still occurs in the source.
+Earlier lazy cold attempts failed quotation/reference validation; subsequent fixes resolved citation IDs against source evidence and normalized valid quotation wrappers. An earlier continuation answered two questions before HTTP 429. A new empty-cache attempt at 12:40 UTC also stopped on its first API request, and a minimal diagnostic at 12:49 UTC identified `credit_balance_exhausted`. After credits were added, the **12:55 UTC fresh run completed all six questions**, followed by a successful offline replay. Historical failures and the separate diagnostic remain in the recorded metrics.
 
-The repaired implementation reused the first run's 31 valid cached readings and completed DEV-01 and DEV-02. HTTP 429 stopped DEV-03. A later resumed attempt also returned HTTP 429, so further API requests were stopped. Neither a successful cold lazy first-answer latency nor the remaining lazy question latencies have been inferred from these fragments. No runtime estimate is substituted for a measurement.
+Limited source checks of the [completed lazy answers](../results/lazy-answers.json) found:
 
-The requested fresh retry at **12:40 UTC** used an empty database, the same six questions, model and effort, and verified unchanged source hashes. Text indexing took **0.079 s**; the first routing request returned HTTP 429, leaving **0/31 documents parsed and no answers**. The run ended after **5.938 s**; no offline replay was attempted because it had no saved answers. The response metadata did not distinguish rate limits from exhausted quota.
+- Both strategies report **12 sessions/11 days**, treat Jan 21's interrupted contact as one 45-minute encounter, and preserve Jan 26's competing 40/50-minute accounts for one encounter.
+- Lazy's collection answer identifies **only Rowan**; eager incorrectly creates Casey, Rowan's partner, as another chart patient.
+- Lazy reports **585–595 minutes** overall and **90 minutes on Jan 19** (60 group + 30 individual). Group calculations use attendance intervals minus documented breaks. This assumes the documented scheduled group windows describe delivered activity; eager leaves some group durations unknown. This is an interpretation requiring review, not an indisputable eager arithmetic error.
+- Both correctly identify PHQ-9 scores **18, 14, 10** across three administrations and exclude the Jan 26 import as a duplicate of Jan 16. Lazy nevertheless claims recent session material was unavailable despite the supplied Jan 14 record; that limitation needs review.
 
-A separate minimal API diagnostic at **12:49 UTC**, with automatic retries disabled, returned **`credit_balance_exhausted`**: the API organization had no prepaid credits remaining. The logger did not recognize this code; it now preserves the code and explains the remedy. Adding API credits is required before retrying. This diagnostic is recorded separately in `benchmark-results.json` and is not a benchmark trial.
+These are limited spotchecks, not an accuracy score. Source-validated citation lists do not establish support for every narrative claim or guarantee a complete inline citation mapping. The strategies differ in representation and arithmetic as well as scheduling; separate trial times, model/network variation, provider caching, and this small single-patient workload limit generalization. No 500K+ document workload was measured.
 
-Limited source checks found:
-
-- Both observed strategies report 12 sessions and 11 days, retain Jan 26 as one encounter with 40/50-minute alternatives, and count Jan 21's interrupted contact as one 45-minute encounter.
-- Eager incorrectly creates Casey, Rowan's partner, as another chart patient in the collection answer. The lazy collection answer remains unavailable.
-- Lazy calculates Jan 19 as 60 group minutes plus 30 individual minutes. This depends on treating the documented scheduled group window as the activity window. Eager leaves group minutes unknown; this is an interpretation requiring review, not an indisputable arithmetic error.
-- Eager's PHQ-9 output matches three assessment occasions with scores 18, 14 and 10. Lazy DEV-05 remains unavailable.
-
-These are limited spotchecks, not an accuracy score. The strategies differ in representation and arithmetic as well as scheduling. Provider prompt caching, network/model variation, code repairs, and the small single-patient workload limit generalization. The README identifies the full-corpus scan, serial calls, and catalog/context construction that constrain 500K+ documents; that scale has not been measured.
-
-## Reproduce or resume
+## Reproduce or replay
 
 Run both strategies on new databases with automatic offline replays (makes API calls):
 
@@ -81,13 +75,14 @@ Run both strategies on new databases with automatic offline replays (makes API c
 python benchmark.py "../Backbone_ Building Clinical Intelligence 09.27/questions.json"
 ```
 
-Outputs go to `responses/benchmarks/<timestamp>/`; existing databases are never reset. To resume this recorded partial experiment after API access permits more requests, reuse the exact augmented question file and saved database:
+Outputs go to `responses/benchmarks/<timestamp>/`; existing databases are never reset. Replay the completed lazy run using its saved database:
 
 ```bash
-python main.py responses/benchmarks/comparison-2026-10-22-live/benchmark-questions.json \
+python main.py responses/benchmarks/lazy-funded-2026-10-22T12-55-14.435507Z-4743fd56/benchmark-questions.json \
   --documents "../Backbone_ Building Clinical Intelligence 09.27/documents" \
   --strategy lazy \
-  --db responses/benchmarks/comparison-2026-10-22-live/lazy.sqlite3
+  --db responses/benchmarks/lazy-funded-2026-10-22T12-55-14.435507Z-4743fd56/lazy.sqlite3 \
+  --offline
 ```
 
-This reuses all 31 readings and the first two answers. Selected result snapshots are checked in; their metadata retains original local paths. Other raw runs and databases are gitignored. The benchmark JSON preserves compact measured results; each local run has its own `execution-summary.json` with averages, cache percentages, usage, and status.
+This reuses all 31 readings and six answers. Selected result snapshots are checked in; their metadata retains original local paths. Other raw runs and databases are gitignored. Each local run has an `execution-summary.json` with averages, cache percentages, usage, and status.

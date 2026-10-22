@@ -1,0 +1,1954 @@
+{
+  "schema_version": 1,
+  "run": {
+    "id": "2026-10-22T13-05-46.578756Z-f33b9d2b",
+    "answer_id": "answers-2026-10-22T13-05-46.578756Z-f33b9d2b",
+    "strategy": "lazy",
+    "pipeline_version": "deferred-v1",
+    "started_at": "2026-10-22T13:05:46.578756+00:00",
+    "finished_at": "2026-10-22T13:05:46.780171+00:00",
+    "timestamp_timezone": "UTC",
+    "status": "completed",
+    "questions_source": {
+      "path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/backbone-takehome/responses/benchmarks/lazy-funded-2026-10-22T12-55-14.435507Z-4743fd56/benchmark-questions.json",
+      "sha256": "ffee75bfb1998a9ad9db54d1341899e892f50ba2b155d651209ded75251b9eb0"
+    },
+    "documents_directory": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents",
+    "database_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/backbone-takehome/responses/benchmarks/lazy-funded-2026-10-22T12-55-14.435507Z-4743fd56/lazy.sqlite3",
+    "model": {
+      "provider": "openai",
+      "name": "gpt-5.6-terra",
+      "reasoning_effort": "medium",
+      "configuration_hash": "d4e86a8cccaa869538f4a9795ab4cac8a87e75cb8e05ef1ff9d09d5a24f9a719"
+    },
+    "offline": true,
+    "ingest_only": false
+  },
+  "answers": [
+    {
+      "question_id": "DEV-01",
+      "question": "For January 5–30, 2026, how many therapy sessions did Rowan attend, by service type and in total, and on how many distinct days? Provide a reviewable abstraction with source support and explain records that could lead to duplicate or ineligible counts.",
+      "scope": {
+        "scope_type": "individual_patient",
+        "patient_labels": [
+          "Rowan Mercer"
+        ],
+        "doc_ids": [
+          "0458648b-e932-4279-b78b-d04de0036fcb",
+          "27e4504b-7982-4eb2-8ddb-b67084927374",
+          "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "3b667ea3-c456-4731-bd7c-85f0f8700e18",
+          "411399d8-de20-4dd7-b074-5439b86cb833",
+          "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "486faaad-642a-4f32-93cb-04a5e9689804",
+          "4b1b0903-31d9-4754-8b7d-3e9d02f983e9",
+          "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "52b23c67-5293-4dc6-93e7-94f5bacf9bf8",
+          "588ab7b4-7776-4705-ad18-b096af1dac3f",
+          "77e66c1a-289c-41eb-b4b7-9fc4b0e562e9",
+          "83c0ffed-bab1-44f0-a087-cb97908328e3",
+          "86ad2857-fb8a-463e-bde3-43e404041037",
+          "8bd7cad6-e807-4d24-be59-092b79ee5c96",
+          "90e4995d-68ba-48d3-88cc-b7382d61f757",
+          "912ee190-e00d-443c-809d-680081848390",
+          "993cfa27-e39c-4115-844c-2b5e095cfda5",
+          "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "a3020f97-0e5c-493b-a7b4-378480a74fce",
+          "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "cb411f01-2ea0-4bac-a8f7-f77d53b93f27",
+          "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "e7bda211-d948-4137-9d38-792c140bb061",
+          "ee2bfcfc-a277-4ddb-91ab-7a29c3d4614d",
+          "f2eb2006-77b4-42c7-8079-f156f2ff2323"
+        ],
+        "limitations": []
+      },
+      "answer": "**Scope used.** The treatment plan defines a therapy day as one with Rowan participating in individual, group, or family psychotherapy; only patient-present psychotherapy counts. Medication management, collateral-only contacts, and care coordination do not count. \n\n| Service type | Attended eligible encounters (date / encounter) | Sessions |\n|---|---|---:|\n| Individual psychotherapy | Jan 5 E101; Jan 14 E107; Jan 19 E111; Jan 21 E112; Jan 26 E115 | **5** |\n| Skills/coping group psychotherapy | Jan 6 E102 (partial attendance); Jan 12 E105; Jan 19 E110; Jan 22 E113 (late arrival); Jan 29 E118 | **5** |\n| Family psychotherapy (Rowan present) | Jan 9 E104; Jan 30 E119 (Rowan present for the final 30 minutes) | **2** |\n| **Total** | **12 unique patient-present psychotherapy encounters** | **12** |\n\n**Distinct therapy days: 11** — Jan 5, 6, 9, 12, 14, 19, 21, 22, 26, 29, and 30. The calculation is 12 encounters minus one second encounter on Jan 19 (group E110 plus individual E111 on the same calendar day) = **11 days**.\n\n**Review notes / exclusions and deduplication**\n- Jan 6 counts as **one** group session despite partial attendance; Jan 12 counts as one full group attendance. Jan 22 counts as one late-arrival group session, and Jan 29 as one attended group session. Actual attendance—not merely the scheduled interval—supports these counts.\n- Jan 19 counts as **two distinct services**: group E110 and the separate individual psychotherapy contact E111. The later final correction changes E110 departure from 11:30 to 11:15 only; it does not alter the separate individual appointment. The original/retransmitted roster is not an additional group visit.\n- Jan 21’s two video-call segments are explicitly a reconnection to the **same** appointment E112, so they are one psychotherapy session, not two.\n- Jan 26 has two clinician records for the same encounter E115, with differing stated contact intervals (09:00–09:50 versus 09:10–09:50). They document the same encounter/appointment and must be counted once; this discrepancy affects minutes, not the session count.\n- Jan 9’s primary and cofacilitator notes both describe E104 and are one family session, not two. Jan 30 E119 is one family encounter; the initial 15 minutes were partner-only, while Rowan participated for the remaining 30 minutes.\n- Excluded: Jan 8 individual no-show; Jan 15 clinic-cancelled group; Jan 16 partner-only collateral contact; Jan 27 group no-show (despite an unsigned template and posted billing charge); Jan 28 pre-appointment cancellation; medication-management visits; care coordination; portal/questionnaire reviews and administrative imports. These are not additional patient-present psychotherapy sessions.\n\nThis count is supported for the requested Jan 5–30 scope. The records are explicitly synthetic training material.",
+      "status": "answered",
+      "citations": [
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "A therapy day is a calendar day on which Rowan participates in individual, group, or family psychotherapy.",
+          "citation_number": 1,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "A therapy day is a calendar day on which Rowan participates in individual, group, or family psychotherapy.",
+              "char_start": 919,
+              "char_end": 1025,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+          "citation_number": 2,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+              "char_start": 1026,
+              "char_end": 1110,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Medication management, contacts with collateral informants only, and care coordination do not contribute.",
+          "citation_number": 3,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Medication management, contacts with collateral informants only, and care coordination do not contribute.",
+              "char_start": 1111,
+              "char_end": 1216,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "quote": "Patient-present individual therapy: 09:00–09:50 local; completed, 50 minutes.",
+          "citation_number": 4,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/intake_and_individual_jan05.txt",
+          "source_document_id": "BH-D002",
+          "locations": [
+            {
+              "quote": "Patient-present individual therapy: 09:00–09:50 local; completed, 50 minutes.",
+              "char_start": 268,
+              "char_end": 345,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "quote": "2026-01-06 | HG-E102   | 10:00–11:30    | 10:15           | 11:15            | Attended part",
+          "citation_number": 5,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/early_group_attendance_roster.txt",
+          "source_document_id": "BH-D005",
+          "locations": [
+            {
+              "quote": "2026-01-06 | HG-E102   | 10:00–11:30    | 10:15           | 11:15            | Attended part",
+              "char_start": 429,
+              "char_end": 521,
+              "line_start": 10,
+              "line_end": 10
+            }
+          ]
+        },
+        {
+          "doc_id": "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "quote": "2026-01-12 | HG-E105   | 10:00–11:30    | 10:00           | 11:30            | Attended full",
+          "citation_number": 6,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/early_group_attendance_roster.txt",
+          "source_document_id": "BH-D005",
+          "locations": [
+            {
+              "quote": "2026-01-12 | HG-E105   | 10:00–11:30    | 10:00           | 11:30            | Attended full",
+              "char_start": 522,
+              "char_end": 614,
+              "line_start": 11,
+              "line_end": 11
+            }
+          ]
+        },
+        {
+          "doc_id": "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "quote": "Patient-present family therapy duration: 45 minutes",
+          "citation_number": 7,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/family_primary_jan09.txt",
+          "source_document_id": "BH-D007",
+          "locations": [
+            {
+              "quote": "Patient-present family therapy duration: 45 minutes",
+              "char_start": 343,
+              "char_end": 394,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "quote": "Patient-present session 11:00–11:45 local; completed, 45 minutes",
+          "citation_number": 8,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/individual_therapy_jan14.txt",
+          "source_document_id": "BH-D011",
+          "locations": [
+            {
+              "quote": "Patient-present session 11:00–11:45 local; completed, 45 minutes",
+              "char_start": 233,
+              "char_end": 297,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+          "citation_number": 9,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D103_attendance_correction_2026-01-20.txt",
+          "source_document_id": "BH-D103",
+          "locations": [
+            {
+              "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+              "char_start": 223,
+              "char_end": 351,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "quote": "It does not change the group service date, scheduled opening or closing, the break recorded in the group clinical note, or the separate individual appointment.",
+          "citation_number": 10,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D103_attendance_correction_2026-01-20.txt",
+          "source_document_id": "BH-D103",
+          "locations": [
+            {
+              "quote": "It does not change the group service date, scheduled opening or closing, the break recorded in the group clinical note, or the separate individual appointment.",
+              "char_start": 897,
+              "char_end": 1056,
+              "line_start": 11,
+              "line_end": 11
+            }
+          ]
+        },
+        {
+          "doc_id": "f2eb2006-77b4-42c7-8079-f156f2ff2323",
+          "quote": "Patient contact: 11:15–11:45 | Completed: 30 minutes",
+          "citation_number": 11,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D105_individual_2026-01-19.txt",
+          "source_document_id": "BH-D105",
+          "locations": [
+            {
+              "quote": "Patient contact: 11:15–11:45 | Completed: 30 minutes",
+              "char_start": 172,
+              "char_end": 224,
+              "line_start": 6,
+              "line_end": 6
+            }
+          ]
+        },
+        {
+          "doc_id": "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "quote": "Patient contact occurred 13:00–13:20 and 13:30–13:55.",
+          "citation_number": 12,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D106_telehealth_2026-01-21.txt",
+          "source_document_id": "BH-D106",
+          "locations": [
+            {
+              "quote": "Patient contact occurred 13:00–13:20 and 13:30–13:55.",
+              "char_start": 221,
+              "char_end": 274,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "quote": "The reconnection continued the same clinical encounter under original appointment HG-A112.",
+          "citation_number": 13,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D106_telehealth_2026-01-21.txt",
+          "source_document_id": "BH-D106",
+          "locations": [
+            {
+              "quote": "The reconnection continued the same clinical encounter under original appointment HG-A112.",
+              "char_start": 417,
+              "char_end": 507,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 22 | HG-E113 | Skills group | 10:00–11:30 | 10:30 | 11:30 | Attended, late arrival",
+          "citation_number": 14,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 22 | HG-E113 | Skills group | 10:00–11:30 | 10:30 | 11:30 | Attended, late arrival",
+              "char_start": 444,
+              "char_end": 534,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 29 | HG-E118 | Skills group | 10:00–11:30 | 10:00 | 11:30 | Attended",
+          "citation_number": 15,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 29 | HG-E118 | Skills group | 10:00–11:30 | 10:00 | 11:30 | Attended",
+              "char_start": 722,
+              "char_end": 798,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "quote": "Actual patient psychotherapy contact: 09:00–09:50, 50 minutes.",
+          "citation_number": 16,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D110_individual_primary_record_2026-01-26.txt",
+          "source_document_id": "BH-D110",
+          "locations": [
+            {
+              "quote": "Actual patient psychotherapy contact: 09:00–09:50, 50 minutes.",
+              "char_start": 241,
+              "char_end": 303,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "quote": "Actual patient psychotherapy contact: 09:10–09:50, 40 minutes.",
+          "citation_number": 17,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D111_individual_second_record_2026-01-26.txt",
+          "source_document_id": "BH-D111",
+          "locations": [
+            {
+              "quote": "Actual patient psychotherapy contact: 09:10–09:50, 40 minutes.",
+              "char_start": 260,
+              "char_end": 322,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "e7bda211-d948-4137-9d38-792c140bb061",
+          "quote": "Partner only: 13:00–13:15. Rowan present with partner: 13:15–13:45, 30 minutes.",
+          "citation_number": 18,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D113_family_therapy_2026-01-30.txt",
+          "source_document_id": "BH-D113",
+          "locations": [
+            {
+              "quote": "Partner only: 13:00–13:15. Rowan present with partner: 13:15–13:45, 30 minutes.",
+              "char_start": 251,
+              "char_end": 330,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "ee2bfcfc-a277-4ddb-91ab-7a29c3d4614d",
+          "quote": "Participants: Rowan Mercer and Casey Mercer; both present for the full 45 minutes",
+          "citation_number": 19,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/family_cofacilitator_jan09.txt",
+          "source_document_id": "BH-D008",
+          "locations": [
+            {
+              "quote": "Participants: Rowan Mercer and Casey Mercer; both present for the full 45 minutes",
+              "char_start": 303,
+              "char_end": 384,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "27e4504b-7982-4eb2-8ddb-b67084927374",
+          "quote": "No patient-present psychotherapy occurred during this contact.",
+          "citation_number": 20,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/partner_collateral_jan16.txt",
+          "source_document_id": "BH-D012",
+          "locations": [
+            {
+              "quote": "No patient-present psychotherapy occurred during this contact.",
+              "char_start": 1508,
+              "char_end": 1570,
+              "line_start": 17,
+              "line_end": 17
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 27 attendance attestation: Final roster confirms Rowan was absent for the entire group. No patient treatment contact occurred. An outreach message inviting the patient to contact scheduling was left after the group; no clinical discussion occurred. Signed: Leah Chen, LCSW, January 27, 11:54.",
+          "citation_number": 21,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 27 attendance attestation: Final roster confirms Rowan was absent for the entire group. No patient treatment contact occurred. An outreach message inviting the patient to contact scheduling was left after the group; no clinical discussion occurred. Signed: Leah Chen, LCSW, January 27, 11:54.",
+              "char_start": 940,
+              "char_end": 1240,
+              "line_start": 16,
+              "line_end": 16
+            }
+          ]
+        },
+        {
+          "doc_id": "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "quote": "Template attendance text: Patient attended the full session and participated in the skills discussion.",
+          "citation_number": 22,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D112_draft_note_and_charge_extract_2026-01-27.txt",
+          "source_document_id": "BH-D112",
+          "locations": [
+            {
+              "quote": "Template attendance text: Patient attended the full session and participated in the skills discussion.",
+              "char_start": 411,
+              "char_end": 513,
+              "line_start": 11,
+              "line_end": 11
+            }
+          ]
+        },
+        {
+          "doc_id": "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "quote": "Charge status in this export: Posted",
+          "citation_number": 23,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D112_draft_note_and_charge_extract_2026-01-27.txt",
+          "source_document_id": "BH-D112",
+          "locations": [
+            {
+              "quote": "Charge status in this export: Posted",
+              "char_start": 1077,
+              "char_end": 1113,
+              "line_start": 23,
+              "line_end": 23
+            }
+          ]
+        },
+        {
+          "doc_id": "4b1b0903-31d9-4754-8b7d-3e9d02f983e9",
+          "quote": "No separate psychotherapy component was provided or documented.",
+          "citation_number": 24,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/medication_review_jan13.txt",
+          "source_document_id": "BH-D010",
+          "locations": [
+            {
+              "quote": "No separate psychotherapy component was provided or documented.",
+              "char_start": 1533,
+              "char_end": 1596,
+              "line_start": 17,
+              "line_end": 17
+            }
+          ]
+        },
+        {
+          "doc_id": "588ab7b4-7776-4705-ad18-b096af1dac3f",
+          "quote": "no psychotherapy was delivered to the patient during the call.",
+          "citation_number": 25,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D109_care_coordination_2026-01-23.txt",
+          "source_document_id": "BH-D109",
+          "locations": [
+            {
+              "quote": "no psychotherapy was delivered to the patient during the call.",
+              "char_start": 1253,
+              "char_end": 1315,
+              "line_start": 13,
+              "line_end": 13
+            }
+          ]
+        },
+        {
+          "doc_id": "52b23c67-5293-4dc6-93e7-94f5bacf9bf8",
+          "quote": "This receipt was entered by the administrative desk and does not document a visit with Rowan.",
+          "citation_number": 26,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/imported_measure_summary_received_jan26.txt",
+          "source_document_id": "BH-D014",
+          "locations": [
+            {
+              "quote": "This receipt was entered by the administrative desk and does not document a visit with Rowan.",
+              "char_start": 1284,
+              "char_end": 1377,
+              "line_start": 19,
+              "line_end": 19
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "The answer counts discrete documented patient-present psychotherapy encounters, not minutes; the conflicting Jan 26 contact intervals therefore do not change this session/day abstraction.",
+        "A partial or late group attendance is counted as one attended therapy session because the question asks for sessions attended. The treatment plan's separate minute goal requires a duration-based analysis.",
+        "All supplied records identify the patient and organization as fictional synthetic training material."
+      ],
+      "needs_source_doc_ids": []
+    },
+    {
+      "question_id": "DEV-02",
+      "question": "How many therapy minutes and hours did Rowan actually receive during the review period, overall and for each Monday–Sunday week? Show calculations or supporting detail, and report any conclusion the available documents do not settle.",
+      "scope": {
+        "scope_type": "individual_patient",
+        "patient_labels": [
+          "Rowan Mercer"
+        ],
+        "doc_ids": [
+          "0458648b-e932-4279-b78b-d04de0036fcb",
+          "27e4504b-7982-4eb2-8ddb-b67084927374",
+          "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "3b667ea3-c456-4731-bd7c-85f0f8700e18",
+          "411399d8-de20-4dd7-b074-5439b86cb833",
+          "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "486faaad-642a-4f32-93cb-04a5e9689804",
+          "4b1b0903-31d9-4754-8b7d-3e9d02f983e9",
+          "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "52b23c67-5293-4dc6-93e7-94f5bacf9bf8",
+          "588ab7b4-7776-4705-ad18-b096af1dac3f",
+          "77e66c1a-289c-41eb-b4b7-9fc4b0e562e9",
+          "83c0ffed-bab1-44f0-a087-cb97908328e3",
+          "86ad2857-fb8a-463e-bde3-43e404041037",
+          "8bd7cad6-e807-4d24-be59-092b79ee5c96",
+          "90e4995d-68ba-48d3-88cc-b7382d61f757",
+          "912ee190-e00d-443c-809d-680081848390",
+          "993cfa27-e39c-4115-844c-2b5e095cfda5",
+          "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "a3020f97-0e5c-493b-a7b4-378480a74fce",
+          "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "cb411f01-2ea0-4bac-a8f7-f77d53b93f27",
+          "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "e7bda211-d948-4137-9d38-792c140bb061",
+          "ee2bfcfc-a277-4ddb-91ab-7a29c3d4614d",
+          "f2eb2006-77b4-42c7-8079-f156f2ff2323"
+        ],
+        "limitations": [
+          "All catalogued records are associated with Rowan Mercer; semantic coverage is unavailable, so all records were selected to capture attendance, treatment, telehealth, corrections, routing, and later reconciliation evidence relevant to actual therapy minutes."
+        ]
+      },
+      "answer": "Eligible time is limited to **patient-present individual, group, and family psychotherapy**; medication management, collateral-only contacts, coordination, questionnaire reviews, cancellations/no-shows, and nontherapeutic group breaks are excluded.\n\n| Monday–Sunday week | Eligible therapy-minute calculation | Minutes | Hours |\n|---|---|---:|---:|\n| **Jan 5–11** | Jan 5 individual 50 + Jan 6 group (10:15–11:15 = 60, less 10:45–11:00 break = 45) + Jan 9 family 45 | **140** | **2 h 20 m** |\n| **Jan 12–18** | Jan 12 group (90 − 15-minute break = 75) + Jan 14 individual 45 | **120** | **2 h 00 m** |\n| **Jan 19–25** | Jan 19 group (10:00–11:15 = 75, less 15-minute break = 60) + Jan 19 individual 30 + Jan 21 video individual 45 (network-disconnect interval excluded) + Jan 22 group (10:30–11:30 = 60, less 15-minute break = 45) | **180** | **3 h 00 m** |\n| **Jan 26–Feb 1** *(only Jan 26–30 is in review period)* | Jan 26 individual HG-E115 **40 or 50** (conflicting final records for the same encounter; do not add them) + Jan 29 group (90 − 15-minute break = 75) + Jan 30 family, Rowan-present portion only 30 | **145–155** | **2 h 25 m–2 h 35 m** |\n\n**Overall, Jan 5–30:** **585–595 eligible therapy minutes = 9 h 45 m–9 h 55 m.**\n\nThe only unresolved component is **HG-E115 on Jan 26**: the primary psychotherapy record reports 09:00–09:50 (50 minutes), whereas a participating-clinician record for the same encounter says the full patient-contact interval was 09:10–09:50 (40 minutes). These are competing accounts of one service, not two sessions; therefore the record supports a range rather than a single total.\n\nNot counted: Jan 13 and Jan 30 medication-management visits; Jan 16 partner-only collateral contact; Jan 23 professionals-only coordination; portal/questionnaire reviews; the Jan 15 clinic-cancelled group; Jan 27 group no-show despite a template draft and posted charge; and the Jan 28 pre-visit cancellation. The Jan 19 group departure is 11:15—not the original 11:30 roster value—under the final correction.",
+      "status": "partial",
+      "citations": [
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+          "citation_number": 1,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+              "char_start": 1026,
+              "char_end": 1110,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Medication management, contacts with collateral informants only, and care coordination do not contribute.",
+          "citation_number": 2,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Medication management, contacts with collateral informants only, and care coordination do not contribute.",
+              "char_start": 1111,
+              "char_end": 1216,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "quote": "Patient-present individual therapy: 09:00–09:50 local; completed, 50 minutes.",
+          "citation_number": 3,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/intake_and_individual_jan05.txt",
+          "source_document_id": "BH-D002",
+          "locations": [
+            {
+              "quote": "Patient-present individual therapy: 09:00–09:50 local; completed, 50 minutes.",
+              "char_start": 268,
+              "char_end": 345,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "quote": "2026-01-06 | HG-E102   | 10:00–11:30    | 10:15           | 11:15            | Attended part",
+          "citation_number": 4,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/early_group_attendance_roster.txt",
+          "source_document_id": "BH-D005",
+          "locations": [
+            {
+              "quote": "2026-01-06 | HG-E102   | 10:00–11:30    | 10:15           | 11:15            | Attended part",
+              "char_start": 429,
+              "char_end": 521,
+              "line_start": 10,
+              "line_end": 10
+            }
+          ]
+        },
+        {
+          "doc_id": "411399d8-de20-4dd7-b074-5439b86cb833",
+          "quote": "The whole group took a break from 10:45 to 11:00. No therapy was conducted during that interval.",
+          "citation_number": 5,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/group_facilitator_jan06.txt",
+          "source_document_id": "BH-D004",
+          "locations": [
+            {
+              "quote": "The whole group took a break from 10:45 to 11:00. No therapy was conducted during that interval.",
+              "char_start": 757,
+              "char_end": 853,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "quote": "Patient-present family therapy duration: 45 minutes",
+          "citation_number": 6,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/family_primary_jan09.txt",
+          "source_document_id": "BH-D007",
+          "locations": [
+            {
+              "quote": "Patient-present family therapy duration: 45 minutes",
+              "char_start": 343,
+              "char_end": 394,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "quote": "2026-01-12 | HG-E105   | 10:00–11:30    | 10:00           | 11:30            | Attended full",
+          "citation_number": 7,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/early_group_attendance_roster.txt",
+          "source_document_id": "BH-D005",
+          "locations": [
+            {
+              "quote": "2026-01-12 | HG-E105   | 10:00–11:30    | 10:00           | 11:30            | Attended full",
+              "char_start": 522,
+              "char_end": 614,
+              "line_start": 11,
+              "line_end": 11
+            }
+          ]
+        },
+        {
+          "doc_id": "90e4995d-68ba-48d3-88cc-b7382d61f757",
+          "quote": "Group break: 10:40–10:55; no therapeutic activity occurred during the break.",
+          "citation_number": 8,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/group_facilitator_jan12.txt",
+          "source_document_id": "BH-D009",
+          "locations": [
+            {
+              "quote": "Group break: 10:40–10:55; no therapeutic activity occurred during the break.",
+              "char_start": 563,
+              "char_end": 639,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "quote": "Patient-present session 11:00–11:45 local; completed, 45 minutes",
+          "citation_number": 9,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/individual_therapy_jan14.txt",
+          "source_document_id": "BH-D011",
+          "locations": [
+            {
+              "quote": "Patient-present session 11:00–11:45 local; completed, 45 minutes",
+              "char_start": 233,
+              "char_end": 297,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+          "citation_number": 10,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D103_attendance_correction_2026-01-20.txt",
+          "source_document_id": "BH-D103",
+          "locations": [
+            {
+              "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+              "char_start": 223,
+              "char_end": 351,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "quote": "The break was for restroom use and refreshments; there was no facilitated discussion, assigned therapeutic activity, or patient treatment during that interval.",
+          "citation_number": 11,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D101_group_content_2026-01-19.txt",
+          "source_document_id": "BH-D101",
+          "locations": [
+            {
+              "quote": "The break was for restroom use and refreshments; there was no facilitated discussion, assigned therapeutic activity, or patient treatment during that interval.",
+              "char_start": 694,
+              "char_end": 853,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "f2eb2006-77b4-42c7-8079-f156f2ff2323",
+          "quote": "Patient contact: 11:15–11:45 | Completed: 30 minutes",
+          "citation_number": 12,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D105_individual_2026-01-19.txt",
+          "source_document_id": "BH-D105",
+          "locations": [
+            {
+              "quote": "Patient contact: 11:15–11:45 | Completed: 30 minutes",
+              "char_start": 172,
+              "char_end": 224,
+              "line_start": 6,
+              "line_end": 6
+            }
+          ]
+        },
+        {
+          "doc_id": "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "quote": "Total patient psychotherapy contact: 45 minutes.",
+          "citation_number": 13,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D106_telehealth_2026-01-21.txt",
+          "source_document_id": "BH-D106",
+          "locations": [
+            {
+              "quote": "Total patient psychotherapy contact: 45 minutes.",
+              "char_start": 368,
+              "char_end": 416,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 22 | HG-E113 | Skills group | 10:00–11:30 | 10:30 | 11:30 | Attended, late arrival",
+          "citation_number": 14,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 22 | HG-E113 | Skills group | 10:00–11:30 | 10:30 | 11:30 | Attended, late arrival",
+              "char_start": 444,
+              "char_end": 534,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "quote": "Scheduled group 10:00–11:30. Nontherapeutic break 10:45–11:00.",
+          "citation_number": 15,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D107_group_activity_records_2026-01-22_and_29.txt",
+          "source_document_id": "BH-D107",
+          "locations": [
+            {
+              "quote": "Scheduled group 10:00–11:30. Nontherapeutic break 10:45–11:00.",
+              "char_start": 217,
+              "char_end": 279,
+              "line_start": 8,
+              "line_end": 8
+            },
+            {
+              "quote": "Scheduled group 10:00–11:30. Nontherapeutic break 10:45–11:00.",
+              "char_start": 978,
+              "char_end": 1040,
+              "line_start": 13,
+              "line_end": 13
+            }
+          ]
+        },
+        {
+          "doc_id": "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "quote": "Actual patient psychotherapy contact: 09:00–09:50, 50 minutes.",
+          "citation_number": 16,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D110_individual_primary_record_2026-01-26.txt",
+          "source_document_id": "BH-D110",
+          "locations": [
+            {
+              "quote": "Actual patient psychotherapy contact: 09:00–09:50, 50 minutes.",
+              "char_start": 241,
+              "char_end": 303,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "quote": "Actual patient psychotherapy contact: 09:10–09:50, 40 minutes.",
+          "citation_number": 17,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D111_individual_second_record_2026-01-26.txt",
+          "source_document_id": "BH-D111",
+          "locations": [
+            {
+              "quote": "Actual patient psychotherapy contact: 09:10–09:50, 40 minutes.",
+              "char_start": 260,
+              "char_end": 322,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "e7bda211-d948-4137-9d38-792c140bb061",
+          "quote": "Partner only: 13:00–13:15. Rowan present with partner: 13:15–13:45, 30 minutes.",
+          "citation_number": 18,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D113_family_therapy_2026-01-30.txt",
+          "source_document_id": "BH-D113",
+          "locations": [
+            {
+              "quote": "Partner only: 13:00–13:15. Rowan present with partner: 13:15–13:45, 30 minutes.",
+              "char_start": 251,
+              "char_end": 330,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 27 attendance attestation: Final roster confirms Rowan was absent for the entire group. No patient treatment contact occurred. An outreach message inviting the patient to contact scheduling was left after the group; no clinical discussion occurred. Signed: Leah Chen, LCSW, January 27, 11:54.",
+          "citation_number": 19,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 27 attendance attestation: Final roster confirms Rowan was absent for the entire group. No patient treatment contact occurred. An outreach message inviting the patient to contact scheduling was left after the group; no clinical discussion occurred. Signed: Leah Chen, LCSW, January 27, 11:54.",
+              "char_start": 940,
+              "char_end": 1240,
+              "line_start": 16,
+              "line_end": 16
+            }
+          ]
+        },
+        {
+          "doc_id": "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "quote": "Template attendance text: Patient attended the full session and participated in the skills discussion.",
+          "citation_number": 20,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D112_draft_note_and_charge_extract_2026-01-27.txt",
+          "source_document_id": "BH-D112",
+          "locations": [
+            {
+              "quote": "Template attendance text: Patient attended the full session and participated in the skills discussion.",
+              "char_start": 411,
+              "char_end": 513,
+              "line_start": 11,
+              "line_end": 11
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "The January 26 HG-E115 records conflict on the patient-contact start time (09:00 versus 09:10). Both identify the same encounter/appointment, so they cannot be summed; the overall and Jan 26–Feb 1 totals remain a 10-minute range.",
+        "The calculation treats documented group breaks as nontherapeutic and subtracts them from Rowan’s actual group attendance intervals."
+      ],
+      "needs_source_doc_ids": []
+    },
+    {
+      "question_id": "DEV-03",
+      "question": "For each week, did the delivered therapy meet the goal documented in Rowan’s treatment plan? State the goal, the relevant therapy-day and minute totals, and whether it was met, not met, or cannot be determined from the current record.",
+      "scope": {
+        "scope_type": "individual_patient",
+        "patient_labels": [
+          "Rowan Mercer"
+        ],
+        "doc_ids": [
+          "0458648b-e932-4279-b78b-d04de0036fcb",
+          "27e4504b-7982-4eb2-8ddb-b67084927374",
+          "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "3b667ea3-c456-4731-bd7c-85f0f8700e18",
+          "411399d8-de20-4dd7-b074-5439b86cb833",
+          "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "486faaad-642a-4f32-93cb-04a5e9689804",
+          "4b1b0903-31d9-4754-8b7d-3e9d02f983e9",
+          "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "52b23c67-5293-4dc6-93e7-94f5bacf9bf8",
+          "588ab7b4-7776-4705-ad18-b096af1dac3f",
+          "77e66c1a-289c-41eb-b4b7-9fc4b0e562e9",
+          "83c0ffed-bab1-44f0-a087-cb97908328e3",
+          "86ad2857-fb8a-463e-bde3-43e404041037",
+          "8bd7cad6-e807-4d24-be59-092b79ee5c96",
+          "90e4995d-68ba-48d3-88cc-b7382d61f757",
+          "912ee190-e00d-443c-809d-680081848390",
+          "993cfa27-e39c-4115-844c-2b5e095cfda5",
+          "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "a3020f97-0e5c-493b-a7b4-378480a74fce",
+          "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "cb411f01-2ea0-4bac-a8f7-f77d53b93f27",
+          "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "e7bda211-d948-4137-9d38-792c140bb061",
+          "ee2bfcfc-a277-4ddb-91ab-7a29c3d4614d",
+          "f2eb2006-77b4-42c7-8079-f156f2ff2323"
+        ],
+        "limitations": []
+      },
+      "answer": "**Goal:** at least **3 therapy days** and **150 minutes of patient-present individual, group, or family psychotherapy** in each Monday–Sunday week. A therapy day requires Rowan’s participation; medication management, collateral-only contacts, and care coordination are excluded.\n\n| Monday–Sunday week | Eligible therapy calculation | Therapy days | Minutes | Goal result |\n|---|---|---:|---:|---|\n| **Jan 5–11** | Jan 5 individual 50 + Jan 6 group: 10:15–11:15 = 60, minus 10:45–11:00 nontherapeutic break = 45 + Jan 9 family 45 | 3 | **140** | **Not met** — day goal met; 10 minutes short. |\n| **Jan 12–18** | Jan 12 group: 10:00–11:30 = 90, minus 10:40–10:55 break = 75 + Jan 14 individual 45 | 2 | **120** | **Not met** — short 1 therapy day and 30 minutes. |\n| **Jan 19–25** | Jan 19 group: corrected 10:00–11:15 = 75, minus 10:45–11:00 break = 60; plus Jan 19 individual 30; Jan 21 individual 45; Jan 22 group: 10:30–11:30 = 60, minus 10:45–11:00 break = 45 | 3 | **180** | **Met**. |\n| **Jan 26–Feb 1** *(only Jan 26–30 is within the requested review period)* | Jan 26 HG-E115 is one encounter, reported as **40 or 50** minutes in competing final records; Jan 29 group 90 minus 15-minute break = 75; Jan 30 family therapy has 30 patient-present minutes | 3 | **145 or 155** through Jan 30 | **Cannot be determined** for the complete Monday–Sunday week: Jan 26 duration conflicts, and Jan 31–Feb 1 are outside the supplied review period. Through Jan 30, the day goal is met, while minutes are 5 below or 5 above goal. |\n\n**Counting controls and exclusions:**\n- The final Jan 19 correction replaces the original group departure of 11:30 with **11:15**; it applies only to that roster field. The group and the subsequent 11:15–11:45 individual session are distinct contacts and are counted once each.\n- Jan 16 was partner-only collateral; Jan 23 was professionals-only coordination; medication-management visits and questionnaire reviews do not qualify for this psychotherapy goal.\n- Jan 27’s pre-service template and posted charge do not establish treatment attendance; the final attendance record says Rowan was absent and received no patient treatment. Jan 28 was cancelled before start.\n- The two Jan 26 records share encounter HG-E115, so they are competing accounts of **one** session, not two sessions; neither record explains which duration governs.",
+      "status": "partial",
+      "citations": [
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Local treatment participation goal: at least 3 therapy days and at least 150 minutes of patient-present therapy in each Monday–Sunday week.",
+          "citation_number": 1,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Local treatment participation goal: at least 3 therapy days and at least 150 minutes of patient-present therapy in each Monday–Sunday week.",
+              "char_start": 779,
+              "char_end": 918,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "A therapy day is a calendar day on which Rowan participates in individual, group, or family psychotherapy.",
+          "citation_number": 2,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "A therapy day is a calendar day on which Rowan participates in individual, group, or family psychotherapy.",
+              "char_start": 919,
+              "char_end": 1025,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+          "citation_number": 3,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+              "char_start": 1026,
+              "char_end": 1110,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Medication management, contacts with collateral informants only, and care coordination do not contribute.",
+          "citation_number": 4,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Medication management, contacts with collateral informants only, and care coordination do not contribute.",
+              "char_start": 1111,
+              "char_end": 1216,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "quote": "Patient-present individual therapy: 09:00–09:50 local; completed, 50 minutes.",
+          "citation_number": 5,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/intake_and_individual_jan05.txt",
+          "source_document_id": "BH-D002",
+          "locations": [
+            {
+              "quote": "Patient-present individual therapy: 09:00–09:50 local; completed, 50 minutes.",
+              "char_start": 268,
+              "char_end": 345,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "quote": "2026-01-06 | HG-E102   | 10:00–11:30    | 10:15           | 11:15            | Attended part",
+          "citation_number": 6,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/early_group_attendance_roster.txt",
+          "source_document_id": "BH-D005",
+          "locations": [
+            {
+              "quote": "2026-01-06 | HG-E102   | 10:00–11:30    | 10:15           | 11:15            | Attended part",
+              "char_start": 429,
+              "char_end": 521,
+              "line_start": 10,
+              "line_end": 10
+            }
+          ]
+        },
+        {
+          "doc_id": "411399d8-de20-4dd7-b074-5439b86cb833",
+          "quote": "The whole group took a break from 10:45 to 11:00. No therapy was conducted during that interval.",
+          "citation_number": 7,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/group_facilitator_jan06.txt",
+          "source_document_id": "BH-D004",
+          "locations": [
+            {
+              "quote": "The whole group took a break from 10:45 to 11:00. No therapy was conducted during that interval.",
+              "char_start": 757,
+              "char_end": 853,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "quote": "Patient-present family therapy duration: 45 minutes",
+          "citation_number": 8,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/family_primary_jan09.txt",
+          "source_document_id": "BH-D007",
+          "locations": [
+            {
+              "quote": "Patient-present family therapy duration: 45 minutes",
+              "char_start": 343,
+              "char_end": 394,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "quote": "2026-01-12 | HG-E105   | 10:00–11:30    | 10:00           | 11:30            | Attended full",
+          "citation_number": 9,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/early_group_attendance_roster.txt",
+          "source_document_id": "BH-D005",
+          "locations": [
+            {
+              "quote": "2026-01-12 | HG-E105   | 10:00–11:30    | 10:00           | 11:30            | Attended full",
+              "char_start": 522,
+              "char_end": 614,
+              "line_start": 11,
+              "line_end": 11
+            }
+          ]
+        },
+        {
+          "doc_id": "90e4995d-68ba-48d3-88cc-b7382d61f757",
+          "quote": "Group break: 10:40–10:55; no therapeutic activity occurred during the break.",
+          "citation_number": 10,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/group_facilitator_jan12.txt",
+          "source_document_id": "BH-D009",
+          "locations": [
+            {
+              "quote": "Group break: 10:40–10:55; no therapeutic activity occurred during the break.",
+              "char_start": 563,
+              "char_end": 639,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "quote": "Patient-present session 11:00–11:45 local; completed, 45 minutes",
+          "citation_number": 11,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/individual_therapy_jan14.txt",
+          "source_document_id": "BH-D011",
+          "locations": [
+            {
+              "quote": "Patient-present session 11:00–11:45 local; completed, 45 minutes",
+              "char_start": 233,
+              "char_end": 297,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+          "citation_number": 12,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D103_attendance_correction_2026-01-20.txt",
+          "source_document_id": "BH-D103",
+          "locations": [
+            {
+              "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+              "char_start": 223,
+              "char_end": 351,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "quote": "The break was for restroom use and refreshments; there was no facilitated discussion, assigned therapeutic activity, or patient treatment during that interval.",
+          "citation_number": 13,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D101_group_content_2026-01-19.txt",
+          "source_document_id": "BH-D101",
+          "locations": [
+            {
+              "quote": "The break was for restroom use and refreshments; there was no facilitated discussion, assigned therapeutic activity, or patient treatment during that interval.",
+              "char_start": 694,
+              "char_end": 853,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "f2eb2006-77b4-42c7-8079-f156f2ff2323",
+          "quote": "Patient contact: 11:15–11:45 | Completed: 30 minutes",
+          "citation_number": 14,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D105_individual_2026-01-19.txt",
+          "source_document_id": "BH-D105",
+          "locations": [
+            {
+              "quote": "Patient contact: 11:15–11:45 | Completed: 30 minutes",
+              "char_start": 172,
+              "char_end": 224,
+              "line_start": 6,
+              "line_end": 6
+            }
+          ]
+        },
+        {
+          "doc_id": "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "quote": "Total patient psychotherapy contact: 45 minutes.",
+          "citation_number": 15,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D106_telehealth_2026-01-21.txt",
+          "source_document_id": "BH-D106",
+          "locations": [
+            {
+              "quote": "Total patient psychotherapy contact: 45 minutes.",
+              "char_start": 368,
+              "char_end": 416,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 22 | HG-E113 | Skills group | 10:00–11:30 | 10:30 | 11:30 | Attended, late arrival",
+          "citation_number": 16,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 22 | HG-E113 | Skills group | 10:00–11:30 | 10:30 | 11:30 | Attended, late arrival",
+              "char_start": 444,
+              "char_end": 534,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "quote": "Scheduled group 10:00–11:30. Nontherapeutic break 10:45–11:00.",
+          "citation_number": 17,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D107_group_activity_records_2026-01-22_and_29.txt",
+          "source_document_id": "BH-D107",
+          "locations": [
+            {
+              "quote": "Scheduled group 10:00–11:30. Nontherapeutic break 10:45–11:00.",
+              "char_start": 217,
+              "char_end": 279,
+              "line_start": 8,
+              "line_end": 8
+            },
+            {
+              "quote": "Scheduled group 10:00–11:30. Nontherapeutic break 10:45–11:00.",
+              "char_start": 978,
+              "char_end": 1040,
+              "line_start": 13,
+              "line_end": 13
+            }
+          ]
+        },
+        {
+          "doc_id": "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "quote": "Actual patient psychotherapy contact: 09:00–09:50, 50 minutes.",
+          "citation_number": 18,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D110_individual_primary_record_2026-01-26.txt",
+          "source_document_id": "BH-D110",
+          "locations": [
+            {
+              "quote": "Actual patient psychotherapy contact: 09:00–09:50, 50 minutes.",
+              "char_start": 241,
+              "char_end": 303,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "quote": "Actual patient psychotherapy contact: 09:10–09:50, 40 minutes.",
+          "citation_number": 19,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D111_individual_second_record_2026-01-26.txt",
+          "source_document_id": "BH-D111",
+          "locations": [
+            {
+              "quote": "Actual patient psychotherapy contact: 09:10–09:50, 40 minutes.",
+              "char_start": 260,
+              "char_end": 322,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 29 | HG-E118 | Skills group | 10:00–11:30 | 10:00 | 11:30 | Attended",
+          "citation_number": 20,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 29 | HG-E118 | Skills group | 10:00–11:30 | 10:00 | 11:30 | Attended",
+              "char_start": 722,
+              "char_end": 798,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "quote": "For both dates, the break was unstructured time without therapeutic activity or facilitator treatment.",
+          "citation_number": 21,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D107_group_activity_records_2026-01-22_and_29.txt",
+          "source_document_id": "BH-D107",
+          "locations": [
+            {
+              "quote": "For both dates, the break was unstructured time without therapeutic activity or facilitator treatment.",
+              "char_start": 1567,
+              "char_end": 1669,
+              "line_start": 17,
+              "line_end": 17
+            }
+          ]
+        },
+        {
+          "doc_id": "e7bda211-d948-4137-9d38-792c140bb061",
+          "quote": "Partner only: 13:00–13:15. Rowan present with partner: 13:15–13:45, 30 minutes.",
+          "citation_number": 22,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D113_family_therapy_2026-01-30.txt",
+          "source_document_id": "BH-D113",
+          "locations": [
+            {
+              "quote": "Partner only: 13:00–13:15. Rowan present with partner: 13:15–13:45, 30 minutes.",
+              "char_start": 251,
+              "char_end": 330,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "27e4504b-7982-4eb2-8ddb-b67084927374",
+          "quote": "No patient-present psychotherapy occurred during this contact.",
+          "citation_number": 23,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/partner_collateral_jan16.txt",
+          "source_document_id": "BH-D012",
+          "locations": [
+            {
+              "quote": "No patient-present psychotherapy occurred during this contact.",
+              "char_start": 1508,
+              "char_end": 1570,
+              "line_start": 17,
+              "line_end": 17
+            }
+          ]
+        },
+        {
+          "doc_id": "588ab7b4-7776-4705-ad18-b096af1dac3f",
+          "quote": "no psychotherapy was delivered to the patient during the call.",
+          "citation_number": 24,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D109_care_coordination_2026-01-23.txt",
+          "source_document_id": "BH-D109",
+          "locations": [
+            {
+              "quote": "no psychotherapy was delivered to the patient during the call.",
+              "char_start": 1253,
+              "char_end": 1315,
+              "line_start": 13,
+              "line_end": 13
+            }
+          ]
+        },
+        {
+          "doc_id": "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "quote": "Status: DRAFT — UNSIGNED — system populated from scheduled group template",
+          "citation_number": 25,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D112_draft_note_and_charge_extract_2026-01-27.txt",
+          "source_document_id": "BH-D112",
+          "locations": [
+            {
+              "quote": "Status: DRAFT — UNSIGNED — system populated from scheduled group template",
+              "char_start": 292,
+              "char_end": 365,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 27 attendance attestation: Final roster confirms Rowan was absent for the entire group. No patient treatment contact occurred. An outreach message inviting the patient to contact scheduling was left after the group; no clinical discussion occurred. Signed: Leah Chen, LCSW, January 27, 11:54.",
+          "citation_number": 26,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 27 attendance attestation: Final roster confirms Rowan was absent for the entire group. No patient treatment contact occurred. An outreach message inviting the patient to contact scheduling was left after the group; no clinical discussion occurred. Signed: Leah Chen, LCSW, January 27, 11:54.",
+              "char_start": 940,
+              "char_end": 1240,
+              "line_start": 16,
+              "line_end": 16
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 28 scheduling entry: Cancellation received from patient January 28, 08:12. Rowan reported a personal scheduling conflict. Appointment HG-E117 was cancelled before the scheduled start; no replacement appointment was booked within January 2026. Entered by Ana Reed, January 28, 08:18.",
+          "citation_number": 27,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 28 scheduling entry: Cancellation received from patient January 28, 08:12. Rowan reported a personal scheduling conflict. Appointment HG-E117 was cancelled before the scheduled start; no replacement appointment was booked within January 2026. Entered by Ana Reed, January 28, 08:18.",
+              "char_start": 1242,
+              "char_end": 1532,
+              "line_start": 18,
+              "line_end": 18
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "The supplied final records for the single Jan 26 HG-E115 encounter conflict: one documents 50 minutes and the participating-clinician record documents 40 minutes. They do not identify a correction or superseding duration.",
+        "The final Monday–Sunday week ends Feb 1, but the requested review period ends Jan 30 and no Jan 31–Feb 1 services are supplied. Full-week attainment therefore cannot be established."
+      ],
+      "needs_source_doc_ids": []
+    },
+    {
+      "question_id": "DEV-04",
+      "question": "Reconstruct the care on January 19 and January 21. How many therapy contacts and patient therapy minutes occurred on each date, and how do the attendance records, clinical notes, later documents, and telehealth records affect your answer?",
+      "scope": {
+        "scope_type": "individual_patient",
+        "patient_labels": [
+          "Rowan Mercer"
+        ],
+        "doc_ids": [
+          "0458648b-e932-4279-b78b-d04de0036fcb",
+          "27e4504b-7982-4eb2-8ddb-b67084927374",
+          "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "3b667ea3-c456-4731-bd7c-85f0f8700e18",
+          "411399d8-de20-4dd7-b074-5439b86cb833",
+          "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "486faaad-642a-4f32-93cb-04a5e9689804",
+          "4b1b0903-31d9-4754-8b7d-3e9d02f983e9",
+          "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "52b23c67-5293-4dc6-93e7-94f5bacf9bf8",
+          "588ab7b4-7776-4705-ad18-b096af1dac3f",
+          "77e66c1a-289c-41eb-b4b7-9fc4b0e562e9",
+          "83c0ffed-bab1-44f0-a087-cb97908328e3",
+          "86ad2857-fb8a-463e-bde3-43e404041037",
+          "8bd7cad6-e807-4d24-be59-092b79ee5c96",
+          "90e4995d-68ba-48d3-88cc-b7382d61f757",
+          "912ee190-e00d-443c-809d-680081848390",
+          "993cfa27-e39c-4115-844c-2b5e095cfda5",
+          "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "a3020f97-0e5c-493b-a7b4-378480a74fce",
+          "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "cb411f01-2ea0-4bac-a8f7-f77d53b93f27",
+          "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "e7bda211-d948-4137-9d38-792c140bb061",
+          "ee2bfcfc-a277-4ddb-91ab-7a29c3d4614d",
+          "f2eb2006-77b4-42c7-8079-f156f2ff2323"
+        ],
+        "limitations": []
+      },
+      "answer": "**January 19, 2026 — 2 therapy contacts; 90 patient-present therapy minutes (1 hr 30 min).**\n\n1. **Skills group HG-E110:** Rowan arrived at 10:00 and the final attendance correction sets departure at **11:15** (not 11:30). The group’s 10:45–11:00 interval was expressly nontherapeutic. Therefore eligible group therapy time is **10:00–10:45 (45 min) + 11:00–11:15 (15 min) = 60 min**. The group note documents Rowan’s participation and distress around workplace discussion; it arranged a same-day individual meeting but does not itself establish the final departure time. \n2. **Individual psychotherapy HG-E111:** a separate, completed patient contact occurred **11:15–11:45 = 30 min**, after Rowan came directly from group because anxiety during the group required grounding and coping-strategy review.\n\n**January 19 calculation:** 60 group + 30 individual = **90 minutes**, across **2 distinct therapy contacts**.\n\nThe original January 19 roster and a January 26 retransmission retain the original 11:30 departure, but neither represents another service. The final correction is expressly limited to the departure field, explains that 11:30 was the scheduled closing time retained in error, and confirms the 11:15 transfer to the individual clinician. Thus the roster/retransmission should not be counted as separate care or used to add 15 group minutes.\n\n**January 21, 2026 — 1 therapy contact; 45 patient-present therapy minutes (0 hr 45 min).**\n\n- **Video individual psychotherapy HG-E112/HG-A112:** therapeutic contact was **13:00–13:20 (20 min)** and **13:30–13:55 (25 min)**. The 13:20–13:30 network-disconnection interval had no therapeutic contact, so **20 + 25 = 45 min**. The note explicitly identifies the reconnected call as a continuation of the **same encounter and original appointment**, not a second contact. The platform export independently shows the same two calls and characterizes the second as a rejoin after disconnect.\n\n**Conclusion:** January 19 has 2 contacts/90 minutes; January 21 has 1 contact/45 minutes. These are patient-present psychotherapy services and fit the plan’s stated inclusions for patient-present individual and group therapy. Collateral-only, care-coordination, measurement-review, administrative, and medication-management records are not counted as therapy contacts or therapy minutes under that plan.\n\n**Limits:** This reconstruction counts documented therapy-contact minutes, not all elapsed time in a scheduled slot. In particular, it excludes explicitly nontherapeutic group breaks and the telehealth disconnect. It does not count the later signing, correction, or retransmission as care.",
+      "status": "answered",
+      "citations": [
+        {
+          "doc_id": "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "quote": "Scheduled group: 10:00–11:30. Nontherapeutic break: 10:45–11:00.",
+          "citation_number": 1,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D101_group_content_2026-01-19.txt",
+          "source_document_id": "BH-D101",
+          "locations": [
+            {
+              "quote": "Scheduled group: 10:00–11:30. Nontherapeutic break: 10:45–11:00.",
+              "char_start": 231,
+              "char_end": 295,
+              "line_start": 6,
+              "line_end": 6
+            }
+          ]
+        },
+        {
+          "doc_id": "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "quote": "The break was for restroom use and refreshments; there was no facilitated discussion, assigned therapeutic activity, or patient treatment during that interval.",
+          "citation_number": 2,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D101_group_content_2026-01-19.txt",
+          "source_document_id": "BH-D101",
+          "locations": [
+            {
+              "quote": "The break was for restroom use and refreshments; there was no facilitated discussion, assigned therapeutic activity, or patient treatment during that interval.",
+              "char_start": 694,
+              "char_end": 853,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+          "citation_number": 3,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D103_attendance_correction_2026-01-20.txt",
+          "source_document_id": "BH-D103",
+          "locations": [
+            {
+              "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+              "char_start": 223,
+              "char_end": 351,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "quote": "The room-transfer record shows Rowan leaving skills room B at 11:15 and being received by the individual clinician at 11:15.",
+          "citation_number": 4,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D103_attendance_correction_2026-01-20.txt",
+          "source_document_id": "BH-D103",
+          "locations": [
+            {
+              "quote": "The room-transfer record shows Rowan leaving skills room B at 11:15 and being received by the individual clinician at 11:15.",
+              "char_start": 500,
+              "char_end": 624,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "quote": "This correction applies only to Rowan Mercer's departure field on the January 19 group attendance roster.",
+          "citation_number": 5,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D103_attendance_correction_2026-01-20.txt",
+          "source_document_id": "BH-D103",
+          "locations": [
+            {
+              "quote": "This correction applies only to Rowan Mercer's departure field on the January 19 group attendance roster.",
+              "char_start": 791,
+              "char_end": 896,
+              "line_start": 11,
+              "line_end": 11
+            }
+          ]
+        },
+        {
+          "doc_id": "f2eb2006-77b4-42c7-8079-f156f2ff2323",
+          "quote": "Patient contact: 11:15–11:45 | Completed: 30 minutes",
+          "citation_number": 6,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D105_individual_2026-01-19.txt",
+          "source_document_id": "BH-D105",
+          "locations": [
+            {
+              "quote": "Patient contact: 11:15–11:45 | Completed: 30 minutes",
+              "char_start": 172,
+              "char_end": 224,
+              "line_start": 6,
+              "line_end": 6
+            }
+          ]
+        },
+        {
+          "doc_id": "f2eb2006-77b4-42c7-8079-f156f2ff2323",
+          "quote": "This visit was added because Rowan became anxious during group and needed individual grounding and review of coping strategies.",
+          "citation_number": 7,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D105_individual_2026-01-19.txt",
+          "source_document_id": "BH-D105",
+          "locations": [
+            {
+              "quote": "This visit was added because Rowan became anxious during group and needed individual grounding and review of coping strategies.",
+              "char_start": 254,
+              "char_end": 381,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "77e66c1a-289c-41eb-b4b7-9fc4b0e562e9",
+          "quote": "Patient arrival: 10:00 | Patient departure: 11:30 | Status: Attended",
+          "citation_number": 8,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D102_original_attendance_2026-01-19.txt",
+          "source_document_id": "BH-D102",
+          "locations": [
+            {
+              "quote": "Patient arrival: 10:00 | Patient departure: 11:30 | Status: Attended",
+              "char_start": 296,
+              "char_end": 364,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "912ee190-e00d-443c-809d-680081848390",
+          "quote": "No correction sheet was included in this transmission.",
+          "citation_number": 9,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D104_resent_roster_received_2026-01-26.txt",
+          "source_document_id": "BH-D104",
+          "locations": [
+            {
+              "quote": "No correction sheet was included in this transmission.",
+              "char_start": 435,
+              "char_end": 489,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "quote": "Patient contact occurred 13:00–13:20 and 13:30–13:55.",
+          "citation_number": 10,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D106_telehealth_2026-01-21.txt",
+          "source_document_id": "BH-D106",
+          "locations": [
+            {
+              "quote": "Patient contact occurred 13:00–13:20 and 13:30–13:55.",
+              "char_start": 221,
+              "char_end": 274,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "quote": "Connection was lost from 13:20–13:30; there was no therapeutic contact during that interval.",
+          "citation_number": 11,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D106_telehealth_2026-01-21.txt",
+          "source_document_id": "BH-D106",
+          "locations": [
+            {
+              "quote": "Connection was lost from 13:20–13:30; there was no therapeutic contact during that interval.",
+              "char_start": 275,
+              "char_end": 367,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "quote": "The reconnection continued the same clinical encounter under original appointment HG-A112.",
+          "citation_number": 12,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D106_telehealth_2026-01-21.txt",
+          "source_document_id": "BH-D106",
+          "locations": [
+            {
+              "quote": "The reconnection continued the same clinical encounter under original appointment HG-A112.",
+              "char_start": 417,
+              "char_end": 507,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "quote": "HG-A112 | VC-112A | January 21 13:00 | January 21 13:20",
+          "citation_number": 13,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D106_telehealth_2026-01-21.txt",
+          "source_document_id": "BH-D106",
+          "locations": [
+            {
+              "quote": "HG-A112 | VC-112A | January 21 13:00 | January 21 13:20",
+              "char_start": 1462,
+              "char_end": 1517,
+              "line_start": 17,
+              "line_end": 17
+            }
+          ]
+        },
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+          "citation_number": 14,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+              "char_start": 1026,
+              "char_end": 1110,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Medication management, contacts with collateral informants only, and care coordination do not contribute.",
+          "citation_number": 15,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Medication management, contacts with collateral informants only, and care coordination do not contribute.",
+              "char_start": 1111,
+              "char_end": 1216,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        }
+      ],
+      "limitations": [],
+      "needs_source_doc_ids": []
+    },
+    {
+      "question_id": "DEV-05",
+      "question": "Summarize the documented symptom course during the episode and the reason for the additional individual contact on January 19. Which symptom assessments are distinct, and what conclusions about progress can and cannot be supported?",
+      "scope": {
+        "scope_type": "individual_patient",
+        "patient_labels": [
+          "Rowan Mercer"
+        ],
+        "doc_ids": [
+          "0458648b-e932-4279-b78b-d04de0036fcb",
+          "27e4504b-7982-4eb2-8ddb-b67084927374",
+          "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "3b667ea3-c456-4731-bd7c-85f0f8700e18",
+          "411399d8-de20-4dd7-b074-5439b86cb833",
+          "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "486faaad-642a-4f32-93cb-04a5e9689804",
+          "4b1b0903-31d9-4754-8b7d-3e9d02f983e9",
+          "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "52b23c67-5293-4dc6-93e7-94f5bacf9bf8",
+          "588ab7b4-7776-4705-ad18-b096af1dac3f",
+          "77e66c1a-289c-41eb-b4b7-9fc4b0e562e9",
+          "83c0ffed-bab1-44f0-a087-cb97908328e3",
+          "86ad2857-fb8a-463e-bde3-43e404041037",
+          "8bd7cad6-e807-4d24-be59-092b79ee5c96",
+          "90e4995d-68ba-48d3-88cc-b7382d61f757",
+          "912ee190-e00d-443c-809d-680081848390",
+          "993cfa27-e39c-4115-844c-2b5e095cfda5",
+          "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "a3020f97-0e5c-493b-a7b4-378480a74fce",
+          "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "cb411f01-2ea0-4bac-a8f7-f77d53b93f27",
+          "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "e7bda211-d948-4137-9d38-792c140bb061",
+          "ee2bfcfc-a277-4ddb-91ab-7a29c3d4614d",
+          "f2eb2006-77b4-42c7-8079-f156f2ff2323"
+        ],
+        "limitations": [
+          "The catalog provides no semantic coverage or document contents, so every record indexed to Rowan Mercer is included, including routing/copy variants and records without episode-date mentions."
+        ]
+      },
+      "answer": "**Episode course (Jan 5–30, 2026):** At intake, Rowan reported low mood, reduced interest, fragmented sleep, difficulty initiating tasks, work-return worry, and avoidance of emails/work conversations. The intake PHQ-9 was **18**. [1]\n\nBy Jan 14–16, Rowan reported some small behavioral gains (opening a work message, short walks, getting out of the apartment somewhat more easily), and the PHQ-9 was **14**. But replying to work communications, morning initiation, and sleep remained problematic. The clinician interpreted this as some depressive-symptom improvement, not resolution. [2]\n\nOn Jan 19, work-return discussion in group provoked visible tension and feeling unable to manage the amount of discussion. The facilitator offered grounding and arranged an individual visit. Rowan then received a separate 30-minute individual psychotherapy contact because of anxiety arising in group; Rowan described feeling overwhelmed by workplace-demand discussion, identified physical anxiety signs, and used grounding/coping review. [4]\n\nLater documentation supports **partial improvement with persistent functional impairment**: Rowan progressed from drafting to sending a supervisor message, but still delayed follow-up, had anxiety when tasks broadened, variable sleep, and continuing work-related avoidance. At Jan 30, Rowan reported mood less persistently low, while work-contact anxiety and variable sleep continued. \n\n**Distinct symptom assessments (do not double-count):**\n1. **Jan 5 intake PHQ-9 = 18** — completed by Rowan during the intake individual-therapy encounter. [1]\n2. **Jan 16 portal PHQ-9 = 14** — a distinct patient-completed questionnaire. The Jan 26 import is explicitly a filed copy of that same Jan 16 form (HG-Q116), not a new assessment or visit. [5]\n3. **Jan 30 PHQ-9 = 10, item 9 = 0** — completed before the afternoon appointment and documented as questionnaire review rather than a separate treatment appointment. [3]\n\n**Supported numerical trend:** 18 → 14 → 10: a 4-point decrease from Jan 5 to Jan 16, another 4-point decrease to Jan 30, and an 8-point overall decrease (8/18 = **44.4%**). This supports improvement in reported depressive symptom burden across three distinct PHQ-9 administrations.\n\n**Limits:** The records do not establish remission, sustained improvement beyond Jan 30, or that score change alone caused functional recovery. Persistent avoidance, work-related anxiety, sleep disruption, and delayed follow-through remained documented; the Jan 19 anxiety episode also shows that work-related discussion could still be acutely difficult. The Jan 16 clinician review draws on unspecified recent session material, so that outside material cannot be independently characterized from the supplied evidence. ",
+      "status": "answered",
+      "citations": [
+        {
+          "doc_id": "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "quote": "PHQ-9 completed by Rowan on 2026-01-05: total score 18.",
+          "citation_number": 1,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/intake_and_individual_jan05.txt",
+          "source_document_id": "BH-D002",
+          "locations": [
+            {
+              "quote": "PHQ-9 completed by Rowan on 2026-01-05: total score 18.",
+              "char_start": 1394,
+              "char_end": 1449,
+              "line_start": 15,
+              "line_end": 15
+            }
+          ]
+        },
+        {
+          "doc_id": "0458648b-e932-4279-b78b-d04de0036fcb",
+          "quote": "Total score: 14",
+          "citation_number": 2,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/symptom_measure_review_jan16.txt",
+          "source_document_id": "BH-D013",
+          "locations": [
+            {
+              "quote": "Total score: 14",
+              "char_start": 285,
+              "char_end": 300,
+              "line_start": 8,
+              "line_end": 8
+            }
+          ]
+        },
+        {
+          "doc_id": "cb411f01-2ea0-4bac-a8f7-f77d53b93f27",
+          "quote": "PHQ-9 total: 10. Item 9: 0.",
+          "citation_number": 3,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D115_symptom_measure_review_2026-01-30.txt",
+          "source_document_id": "BH-D115",
+          "locations": [
+            {
+              "quote": "PHQ-9 total: 10. Item 9: 0.",
+              "char_start": 185,
+              "char_end": 212,
+              "line_start": 6,
+              "line_end": 6
+            }
+          ]
+        },
+        {
+          "doc_id": "f2eb2006-77b4-42c7-8079-f156f2ff2323",
+          "quote": "This visit was added because Rowan became anxious during group and needed individual grounding and review of coping strategies.",
+          "citation_number": 4,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D105_individual_2026-01-19.txt",
+          "source_document_id": "BH-D105",
+          "locations": [
+            {
+              "quote": "This visit was added because Rowan became anxious during group and needed individual grounding and review of coping strategies.",
+              "char_start": 254,
+              "char_end": 381,
+              "line_start": 9,
+              "line_end": 9
+            }
+          ]
+        },
+        {
+          "doc_id": "52b23c67-5293-4dc6-93e7-94f5bacf9bf8",
+          "quote": "Import detail: copied result from the January 16 portal form.",
+          "citation_number": 5,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/imported_measure_summary_received_jan26.txt",
+          "source_document_id": "BH-D014",
+          "locations": [
+            {
+              "quote": "Import detail: copied result from the January 16 portal form.",
+              "char_start": 931,
+              "char_end": 992,
+              "line_start": 17,
+              "line_end": 17
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "The supplied records support three distinct PHQ-9 totals but do not provide item-level results for the January 5 or January 16 administrations.",
+        "The Jan 16 review refers to recent individual-session material not supplied here; its content and date cannot be independently assessed.",
+        "PHQ-9 trend and narrative reports support partial improvement, but do not by themselves establish remission, causality, or durable functional recovery. The entire supplied collection is labeled synthetic and fictional."
+      ],
+      "needs_source_doc_ids": []
+    },
+    {
+      "question_id": "BENCH-COLLECTION",
+      "question": "For every patient represented in the supplied collection, report the number of eligible patient-present therapy sessions, distinct therapy days, and therapy minutes for January 5–30, 2026, separately by patient. Preserve any unresolved alternatives and cite supporting sources.",
+      "scope": {
+        "scope_type": "collection_wide",
+        "patient_labels": [
+          "Rowan Mercer"
+        ],
+        "doc_ids": [
+          "0458648b-e932-4279-b78b-d04de0036fcb",
+          "27e4504b-7982-4eb2-8ddb-b67084927374",
+          "3047bd73-1487-496f-b7ff-0a7627f6d798",
+          "3b667ea3-c456-4731-bd7c-85f0f8700e18",
+          "411399d8-de20-4dd7-b074-5439b86cb833",
+          "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "442a7c52-40ce-402e-9b88-3d8fa1d3e29d",
+          "486faaad-642a-4f32-93cb-04a5e9689804",
+          "4b1b0903-31d9-4754-8b7d-3e9d02f983e9",
+          "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "51fb997d-ca64-4f31-8cf9-0f51e9f068a0",
+          "52b23c67-5293-4dc6-93e7-94f5bacf9bf8",
+          "588ab7b4-7776-4705-ad18-b096af1dac3f",
+          "77e66c1a-289c-41eb-b4b7-9fc4b0e562e9",
+          "83c0ffed-bab1-44f0-a087-cb97908328e3",
+          "86ad2857-fb8a-463e-bde3-43e404041037",
+          "8bd7cad6-e807-4d24-be59-092b79ee5c96",
+          "90e4995d-68ba-48d3-88cc-b7382d61f757",
+          "912ee190-e00d-443c-809d-680081848390",
+          "993cfa27-e39c-4115-844c-2b5e095cfda5",
+          "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "a3020f97-0e5c-493b-a7b4-378480a74fce",
+          "ab470d67-7d79-44c2-81d5-d60b0a3b7982",
+          "b2358481-0537-4091-9ad8-df4e1e38837d",
+          "cb411f01-2ea0-4bac-a8f7-f77d53b93f27",
+          "cd2ccc4f-c559-476e-a4e6-175ed3fd4a94",
+          "d74ab27a-5c0f-446d-8212-a31c54e7530d",
+          "e159b909-313a-4a21-bee5-08b9a5ef8e2d",
+          "e7bda211-d948-4137-9d38-792c140bb061",
+          "ee2bfcfc-a277-4ddb-91ab-7a29c3d4614d",
+          "f2eb2006-77b4-42c7-8079-f156f2ff2323"
+        ],
+        "limitations": []
+      },
+      "answer": "**Patient represented: Rowan Mercer**\n\n**Eligible patient-present psychotherapy, Jan 5–30, 2026**\n- **Sessions:** **12** (individual **5**, group **5**, family **2**)\n- **Distinct therapy days:** **11**\n- **Therapy minutes:** **585–595 minutes** (**9 h 45 m–9 h 55 m**), owing solely to conflicting documentation of the *same* January 26 individual session.\n\nThe treatment plan defines eligible services as patient-present individual, group, and family psychotherapy; it excludes medication management, collateral-only contacts, and care coordination. A therapy day is a calendar day with qualifying participation. [1]\n\n| Date | Eligible service(s), counted once per encounter | Minutes |\n|---|---|---:|\n| Jan 5 | Individual (HG-E101) | 50 |\n| Jan 6 | Group (HG-E102), partial attendance | 45 |\n| Jan 9 | Family (HG-E104) | 45 |\n| Jan 12 | Group (HG-E105) | 75 |\n| Jan 14 | Individual (HG-E107) | 45 |\n| Jan 19 | Group (HG-E110) + added individual (HG-E111) | 60 + 30 = 90 |\n| Jan 21 | Individual video (HG-E112) | 45 |\n| Jan 22 | Group (HG-E113), late arrival | 45 |\n| Jan 26 | Individual (HG-E115), one encounter with conflicting duration | **40 or 50** |\n| Jan 29 | Group (HG-E118) | 75 |\n| Jan 30 | Family (HG-E119): Rowan present only 13:15–13:45 | 30 |\n\n**Calculation:** known minutes = 50+45+45+75+45+90+45+45+75+30 = **545**. Adding the Jan 26 supported alternatives of **40 or 50** yields **585 or 595 minutes**. The 12 sessions occur over 11 calendar days because Jan 19 has two distinct, non-overlapping patient-present encounters.\n\n**Support and reconciliation**\n- Individual/family sessions have documented patient-present durations: Jan 5 (50), Jan 9 (45), Jan 14 (45), Jan 19 individual (30), and Jan 21 video (45; the 10-minute disconnection is explicitly non-therapeutic). \n- Group minutes use actual attendance minus expressly nontherapeutic breaks: Jan 6, 10:15–11:15 less 10:45–11:00 = 45; Jan 12, 90−15 = 75; Jan 19, corrected 10:00–11:15 less 10:45–11:00 = 60; Jan 22, 10:30–11:30 less 10:45–11:00 = 45; Jan 29, 90−15 = 75. [2]\n- Jan 26 is **one** individual encounter, not two sessions: the primary record gives 09:00–09:50 (50 minutes), while the participating-clinician record gives 09:10–09:50 (40 minutes). Neither document resolves the discrepancy. [3, 4]\n- Jan 30’s 45-minute family-session interval includes 15 minutes when Rowan was absent; only the 30 minutes after Rowan joined qualify. [5]\n\n**Not counted / duplicate safeguards**\n- Do not count the Jan 15 clinic-cancelled group, Jan 27 no-show, or Jan 28 pre-appointment cancellation. The prepopulated Jan 27 draft and posted charge do not establish attendance or delivered therapy and conflict with the finalized no-show record. [6]\n- Do not count medication-management visits, Jan 16 partner-only collateral, Jan 23 professional-only coordination, or questionnaire/administrative reviews; their records explicitly exclude psychotherapy, patient contact, or a separate appointment. \n- The January 26 retransmitted roster and January 26 imported PHQ-9 summary are copies/filing events, not additional services or assessments. ",
+      "status": "partial",
+      "citations": [
+        {
+          "doc_id": "486faaad-642a-4f32-93cb-04a5e9689804",
+          "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+          "citation_number": 1,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/signed_treatment_plan_jan05.txt",
+          "source_document_id": "BH-D003",
+          "locations": [
+            {
+              "quote": "Patient-present individual, group, and family therapy contribute to the minute goal.",
+              "char_start": 1026,
+              "char_end": 1110,
+              "line_start": 12,
+              "line_end": 12
+            }
+          ]
+        },
+        {
+          "doc_id": "41525485-50e2-45e7-93fa-4639527ac4bd",
+          "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+          "citation_number": 2,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D103_attendance_correction_2026-01-20.txt",
+          "source_document_id": "BH-D103",
+          "locations": [
+            {
+              "quote": "Correction: Patient departure for HG-E110 is 11:15, replacing the original roster value of 11:30. Patient arrival remains 10:00.",
+              "char_start": 223,
+              "char_end": 351,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "9b043acc-e7fc-44c8-b343-aa488e60ba0b",
+          "quote": "Actual patient psychotherapy contact: 09:00–09:50, 50 minutes.",
+          "citation_number": 3,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D110_individual_primary_record_2026-01-26.txt",
+          "source_document_id": "BH-D110",
+          "locations": [
+            {
+              "quote": "Actual patient psychotherapy contact: 09:00–09:50, 50 minutes.",
+              "char_start": 241,
+              "char_end": 303,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "4be28c73-b0ea-47a0-ac4d-370be71afb15",
+          "quote": "Actual patient psychotherapy contact: 09:10–09:50, 40 minutes.",
+          "citation_number": 4,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D111_individual_second_record_2026-01-26.txt",
+          "source_document_id": "BH-D111",
+          "locations": [
+            {
+              "quote": "Actual patient psychotherapy contact: 09:10–09:50, 40 minutes.",
+              "char_start": 260,
+              "char_end": 322,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "e7bda211-d948-4137-9d38-792c140bb061",
+          "quote": "Partner only: 13:00–13:15. Rowan present with partner: 13:15–13:45, 30 minutes.",
+          "citation_number": 5,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D113_family_therapy_2026-01-30.txt",
+          "source_document_id": "BH-D113",
+          "locations": [
+            {
+              "quote": "Partner only: 13:00–13:15. Rowan present with partner: 13:15–13:45, 30 minutes.",
+              "char_start": 251,
+              "char_end": 330,
+              "line_start": 7,
+              "line_end": 7
+            }
+          ]
+        },
+        {
+          "doc_id": "86ad2857-fb8a-463e-bde3-43e404041037",
+          "quote": "January 27 attendance attestation: Final roster confirms Rowan was absent for the entire group. No patient treatment contact occurred. An outreach message inviting the patient to contact scheduling was left after the group; no clinical discussion occurred. Signed: Leah Chen, LCSW, January 27, 11:54.",
+          "citation_number": 6,
+          "source_path": "/Users/anakhaganesh/Documents/MIT/Interview Prep/backbone/Backbone_ Building Clinical Intelligence 09.27/documents/BH-D108_final_attendance_and_cancellation_register.txt",
+          "source_document_id": "BH-D108",
+          "locations": [
+            {
+              "quote": "January 27 attendance attestation: Final roster confirms Rowan was absent for the entire group. No patient treatment contact occurred. An outreach message inviting the patient to contact scheduling was left after the group; no clinical discussion occurred. Signed: Leah Chen, LCSW, January 27, 11:54.",
+              "char_start": 940,
+              "char_end": 1240,
+              "line_start": 16,
+              "line_end": 16
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "The total-minute result cannot be resolved to one value because two final records for the same Jan 26 encounter document different patient-contact starts (09:00 versus 09:10) and durations (50 versus 40 minutes).",
+        "Only Rowan Mercer is represented in the supplied collection."
+      ],
+      "needs_source_doc_ids": []
+    }
+  ],
+  "errors": [],
+  "artifacts": {
+    "abstraction": "abstraction.json",
+    "execution": "execution.json",
+    "execution_summary": "execution-summary.json"
+  }
+}

@@ -4,6 +4,26 @@ Measured October 22, 2026 using `gpt-5.6-terra`, reasoning effort `medium`, on 3
 
 ## Measured results
 
+### Fresh and cached runs
+
+**Fresh documents — initially empty caches; 31 documents**
+
+| Strategy | Document processing | Patient question, mean | Collection question |
+| --- | ---: | ---: | ---: |
+| Eager | 178.680 s | 12.723 s (5 questions) | 14.714 s |
+| Lazy | 0.061 s, text indexing | Unavailable | Unavailable |
+
+**Cached documents and answers — exact replay**
+
+| Strategy | Document processing | Patient question, mean | Collection question |
+| --- | ---: | ---: | ---: |
+| Eager | 0.053 s | 0.0075 s (5 questions) | 0.0084 s |
+| Lazy | 0.187 s | 0.0084 s (2 questions) | Unavailable |
+
+Replay reuses saved answers. Lazy runs were incomplete; the collection contains one chart patient, so cross-patient performance is unmeasured. Cached figures come from eager replay and lazy partial offline replay in [the recorded metrics](../benchmark-results.json).
+
+### New-answer comparison
+
 These are observed phase timings from the runs described below, **not two successful cold end-to-end runs**.
 
 | Measurement | Eager | Deferred (`lazy`) |

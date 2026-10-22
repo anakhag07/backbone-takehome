@@ -38,6 +38,32 @@ For the prototype, this is a design contract, not a requirement to implement a g
 
 ## Storage boundaries
 
+Use two logical storage structures: a patient abstraction/index keyed by patient ID, and an immutable document store keyed by internal document ID. The patient index holds references to documents, so each body is stored once even when it supports several patients, dates, or encounters.
+
+```text
+patients[patient_id]
+    identifiers
+    by_service_date[date]
+        document_ids
+        encounters[encounter_id]
+            document_ids, claim_ids, resolved_fields, alternatives
+    plans, assessments
+    unlinked_document_ids
+
+documents[doc_id]
+    text, content_hash, source_system, source_document_id
+    authored_at, signed_at, received_at
+    cached_extractions, source_spans, copy/correction references
+```
+
+Define `I(patient, date)` as the set of documents containing evidence about that patient on that service date. This is a retrieval index: membership does not establish that documents describe the same encounter or have equal authority. Retrieve the day's cached claims, distinguish encounters, and reconcile each field using its evidence. Read original source spans or perform further model extraction only when the cached claims do not cover the issue.
+
+One document can belong to several date buckets. A correction received later belongs under the service date it corrects while retaining its receipt date. Preserve unresolved dates and encounter links rather than forcing a bucket. Effective treatment plans and explicit copy/correction links can supply evidence beyond one day's bucket and must remain accessible at patient level. Repeated copies do not become independent votes for a claim.
+
+In Python, these interfaces can look like dictionaries. Persist them in SQLite using a document table, the patient abstraction tables below, and document-reference rows indexed by `(patient_id, service_date, encounter_id, doc_id)`. The index prefix supports patient/day retrieval. Two logical stores need not mean exactly two physical tables or two database services. SQLite supplies persistent indexed lookups; an optional in-memory dictionary cache supplies hash-map lookups without loading all document bodies into memory.
+
+Keep internal `doc_id`, external `(source_system, source_document_id)`, and `content_hash` separate. The document ID identifies an immutable stored revision; the content hash detects identical content for extraction reuse. Hashing a source-assigned document ID does not detect identical content arriving under another ID.
+
 Use an internal patient ID. A name is an attribute, and `(issuing_system, MRN)` is a scoped external identifier. Name and date of birth provide corroborating identity evidence. Missing or conflicting identifiers should create an unresolved linkage rather than force a merge. Keep chart-patient identity distinct from relatives, clinicians, and other participants mentioned in the text.
 
 | Logical entity | Essential information |
@@ -132,6 +158,23 @@ Meaningful checks for implementation should include duplicate invariance, stabil
 ## Prototype scope and experiment
 
 Implement one end-to-end CLI with Python and SQLite before adding distributed infrastructure. Use the supplied corpus to validate semantics; expose paths and settings through configuration. A full implementation is the next phase, not part of this repository initialization.
+
+### Model access and reproducibility
+
+Use a small configurable OpenAI API adapter as the first extraction backend. The [minimal API example](../examples/ask_model.py) demonstrates request wiring only; it does not implement clinical extraction, storage, or reconciliation. It accepts a question plus optional evidence text, reads the API key from the local environment, and makes the model and reasoning effort explicit. The [official quickstart](https://developers.openai.com/api/docs/quickstart) documents SDK installation and environment-based authentication.
+
+An initial model/effort baseline to evaluate is `gpt-5.6-terra` with `medium`; this is a proposed experiment, not an observed quality result. Its [model documentation](https://developers.openai.com/api/docs/models/gpt-5.6-terra) describes the cost/capability positioning and supported efforts. Effort is model-dependent; validate settings if the model changes. The [reasoning guide](https://developers.openai.com/api/docs/guides/reasoning) specifies `reasoning={"effort": ...}` for Responses requests.
+
+The actual extraction adapter should use typed [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs), validate quoted evidence, and handle refusals and incomplete outputs before writing claims. Schema-conforming output still requires semantic validation. Keep prompt text and schema in version control; keep credentials in the local environment. Include model, effort, prompt/schema versions, source hashes, usage, and raw extraction results in each saved run. Pin tested dependency versions and a model snapshot where available for the final submission; fresh model calls may still vary.
+
+Provide two execution paths in the eventual CLI:
+
+- **Replay:** load a supplied abstraction or extraction cache and reproduce reconciliation/calculations without model access. Cached narrative can be displayed as recorded; new narrative generation may need a model.
+- **Fresh ingestion:** process new documents, calling the configured model only when semantic extraction is needed. This requires the runner's own API access, network connection, and usage budget.
+
+GitHub distributes the code and saved artifacts; each runner supplies their own API credentials. Replay is not evidence that a fresh extraction run produces byte-identical output. Fail explicitly on uncached model work in offline mode instead of silently skipping it.
+
+A local open-weight model can be added behind the same extraction contract if offline inference is a requirement or a model-comparison experiment is valuable. It introduces weight downloads, runtime/hardware requirements, and a separate schema/accuracy evaluation. Start with the API so the take-home primarily demonstrates abstraction and reconciliation; keep the extraction interface small enough to replace the backend later.
 
 A useful experiment compares a parse-once structured LLM baseline with deterministic extraction plus selective LLM fallback, holding downstream reconciliation and questions fixed. Measure source-supported accuracy and conflict preservation as well as calls, tokens, cost, and latency. A no-LLM parser is also a useful ablation if time permits. This tests whether rule coverage saves model work without losing semantic facts.
 

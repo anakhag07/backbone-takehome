@@ -6,7 +6,7 @@ import json
 import re
 import time
 
-from .deferred_model import DeferredModelClient, validate_answer, validate_notes, validate_selection
+from .deferred_model import DeferredModelClient, _reference_context, validate_answer, validate_notes, validate_selection
 from .model import _source_locations, parse_metadata
 from .pipeline import RunResult, _now, _online, _safe_error, _write_json, digest, load_questions
 from .reporting import make_run_id, model_call_stage, write_execution_summary
@@ -187,7 +187,7 @@ def _answer_questions(settings, client, store, questions, catalog, documents, no
             context = {"question_set": questions, "selection": selection,
                 "documents": [{"doc_id": doc_id, "source_document_id": documents[doc_id]["source_doc_id"],
                                "notes": _visible_notes(notes[doc_id])} for doc_id in selected]}
-            measurement["context_characters"] = _check_context(settings, context)
+            measurement["context_characters"] = _check_context(settings, _reference_context(context)[0])
             answer_key = digest({"question": question, "context": context, "config": client.answer_hash, "version": VERSION})
             answer = None if settings.refresh else store.get_cache("deferred_answers", answer_key)
             if answer is None:
@@ -205,7 +205,7 @@ def _answer_questions(settings, client, store, questions, catalog, documents, no
                         for item in expanded["documents"]:
                             if item["doc_id"] in requested:
                                 item["text"] = documents[item["doc_id"]]["text"]
-                        measurement["context_characters"] = _check_context(settings, expanded)
+                        measurement["context_characters"] = _check_context(settings, _reference_context(expanded)[0])
                         measurement["original_documents_reread"] = len(requested)
                         with model_call_stage(client, "source_reread_answer", question_id=question["id"]):
                             answer = validate_answer(client.answer_from_notes(question["question"], expanded), expanded)

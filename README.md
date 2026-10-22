@@ -45,7 +45,7 @@ Put UTF-8 `.txt` files in a document directory; subdirectories are included. Ing
 python main.py /path/to/questions.json --documents /path/to/documents
 ```
 
-Add new or updated files to that directory and rerun. Unchanged documents reuse cached extraction. Keep the complete active collection there: removing a file removes it from the current evidence set. The default database is `.backbone/abstraction.sqlite3` in the working directory. Use a separate `--db /path/to/other.sqlite3` for a different collection.
+Add new or updated files to that directory and rerun. Each run reads and hashes files to detect changes; unchanged documents reuse cached extraction. Progress labels distinguish `cached; no model call` from `extracting with model`. Keep the complete active collection there: removing a file removes it from the current evidence set. The default database is `.backbone/abstraction.sqlite3` in the working directory. Use a separate `--db /path/to/other.sqlite3` for a different collection.
 
 ### 2. Ask new questions
 

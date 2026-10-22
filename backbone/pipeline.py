@@ -268,10 +268,11 @@ def run_pipeline(settings: Settings, client=None,
         if not files:
             raise ValueError("No UTF-8 .txt documents found in the documents directory.")
         extraction_clock = time.perf_counter()
+        report(f"Extraction cache: {settings.database.resolve()}")
         with Store(settings.database) as store:
             documents, extractions = {}, {}
             for index, path in enumerate(files, 1):
-                report(f"Document {index}/{len(files)}: {path.name}")
+                label = f"Document {index}/{len(files)}: {path.name}"
                 document_clock = time.perf_counter()
                 text = path.read_text(encoding="utf-8-sig")
                 metadata = parse_metadata(text)
@@ -279,6 +280,7 @@ def run_pipeline(settings: Settings, client=None,
                                                  metadata["source_system"])
                 doc_id = document["doc_id"]
                 if doc_id in documents:
+                    report(f"{label} [duplicate; reusing extraction]")
                     execution["documents"].append({"path": str(path.resolve()),
                         "doc_id": doc_id, "status": "duplicate", "model_call": False})
                     continue
@@ -287,11 +289,14 @@ def run_pipeline(settings: Settings, client=None,
                 if cached is None:
                     execution["cache"]["extractions_miss"] += 1
                     _online(settings, f"document {path.name}")
+                    reason = "forced refresh" if settings.refresh else "cache miss"
+                    report(f"{label} [extracting with model; {reason}]")
                     metadata.update({"doc_id": doc_id, "source_path": str(path.resolve())})
                     extraction = validate_extraction(client.extract_document(text, metadata), text)
                     store.save_extraction(doc_id, client.config_hash, extraction)
                 else:
                     execution["cache"]["extractions_hit"] += 1
+                    report(f"{label} [cached; no model call]")
                     extraction = validate_extraction(cached, text)
                 extractions[doc_id] = extraction
                 sources[doc_id] = {"doc_id": doc_id, "source_document_id": document["source_doc_id"],
@@ -303,6 +308,8 @@ def run_pipeline(settings: Settings, client=None,
                     "status": "cached" if cached is not None else "extracted",
                     "elapsed_seconds": time.perf_counter() - document_clock})
             execution["ingestion_seconds"] = time.perf_counter() - extraction_clock
+            report(f"Documents: {execution['cache']['extractions_hit']} cached, "
+                   f"{execution['cache']['extractions_miss']} extracted with model")
             report("Reconciling patient records and calculating care totals")
             records = _patient_records(store, documents, extractions)
             patients = [p for p in store.list_patients() if p["patient_id"] in records]

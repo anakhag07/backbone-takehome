@@ -183,7 +183,7 @@ def validate_extraction(payload: dict, text: str) -> dict:
 
 def _jsonable(value: Any) -> Any:
     if hasattr(value, "model_dump"):
-        return value.model_dump(mode="json")
+        return value.model_dump(mode="json", warnings=False)
     if isinstance(value, list):
         return [_jsonable(item) for item in value]
     if isinstance(value, dict):

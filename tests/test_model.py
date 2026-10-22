@@ -1,6 +1,7 @@
 """Exercise the API boundary without credentials, SDK installation, or paid requests."""
 
 from copy import deepcopy
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -237,3 +238,62 @@ def test_error_request_id_rejects_arbitrary_header_or_body_content():
     assert "API key" in str(failure.value)
     assert "request_id" not in client.calls[0]
     assert "secret-test-key" not in str(failure.value)
+
+
+def test_real_sdk_builds_strict_schema_and_decodes_typed_output_offline():
+    import httpx
+    from openai import OpenAI
+
+    captured = []
+
+    def respond(request):
+        assert request.method == "POST"
+        assert request.url.path == "/v1/responses"
+        body = json.loads(request.content)
+        captured.append(body)
+        assert body["model"] == "gpt-5.6-terra"
+        assert body["reasoning"] == {"effort": "medium"}
+        assert body["store"] is False
+        output_format = body["text"]["format"]
+        assert output_format["type"] == "json_schema"
+        assert output_format["name"] == "DocumentExtraction"
+        assert output_format["strict"] is True
+        assert output_format["schema"]["additionalProperties"] is False
+        assert set(output_format["schema"]["required"]) == set(extraction())
+        assert output_format["schema"]["$defs"]["EncounterClaim"]["properties"][
+            "reported_minutes"
+        ]["anyOf"][0]["minimum"] == 0
+        return httpx.Response(200, headers={"x-request-id": "req_mock_transport"}, json={
+            "id": "resp_mock_transport", "object": "response", "created_at": 1760000000,
+            "status": "completed", "error": None, "incomplete_details": None,
+            "instructions": body["instructions"], "model": body["model"],
+            "output": [{
+                "id": "msg_mock_transport", "type": "message", "role": "assistant",
+                "status": "completed", "content": [{
+                    "type": "output_text", "text": json.dumps(extraction()), "annotations": [],
+                }],
+            }],
+            "parallel_tool_calls": True, "reasoning": body["reasoning"],
+            "store": False, "text": body["text"], "tool_choice": "auto", "tools": [],
+            "usage": {
+                "input_tokens": 100, "input_tokens_details": {"cached_tokens": 0},
+                "output_tokens": 200, "output_tokens_details": {"reasoning_tokens": 50},
+                "total_tokens": 300,
+            },
+        })
+
+    client = ModelClient("gpt-5.6-terra", "medium")
+    # The real SDK handles serialization and Pydantic parsing. Only HTTP I/O is
+    # replaced, so this never contacts an external server or uses a real key.
+    with httpx.Client(transport=httpx.MockTransport(respond)) as transport_client:
+        with OpenAI(api_key="unit-test-placeholder", base_url="https://unit.test/v1",
+                    http_client=transport_client, max_retries=0) as sdk:
+            client._client = sdk
+            result = client.extract_document(TEXT, parse_metadata(TEXT))
+    assert len(captured) == 1
+    assert result["encounters"][0]["reported_minutes"] == 40
+    assert result["source_spans"]
+    assert client.calls[0]["request_id"] == "req_mock_transport"
+    assert client.calls[0]["response_id"] == "resp_mock_transport"
+    assert client.calls[0]["usage"]["output_tokens_details"]["reasoning_tokens"] == 50
+    assert "unit-test-placeholder" not in repr(client.calls)

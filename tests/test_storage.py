@@ -66,6 +66,35 @@ def test_missing_mrn_requires_unique_name_and_dob(tmp_path):
         assert same_name_only not in {first, other, ambiguous}
 
 
+def test_scoped_mrn_promotes_unique_provisional_identity_without_changing_id(tmp_path):
+    database = tmp_path / "saved.sqlite3"
+    with Store(database) as store:
+        provisional = store.resolve_patient(identity(mrn=None, issuer=None))
+        store.save_patient_abstraction(provisional, {"events": ["preserve-me"]})
+    with Store(database) as store:
+        assert store.resolve_patient(identity(name=" example  patient ")) == provisional
+        patients = store.list_patients()
+        assert len(patients) == 1
+        assert patients[0]["identifiers"] == [{"issuer": "Clinic A", "mrn": "M-001"}]
+        assert len(patients[0]["identity_evidence"]) == 2
+        assert store.get_patient_abstraction(provisional) == {"events": ["preserve-me"]}
+        # Exact demographics do not permit adding a different institution's MRN
+        # to an already identified patient without further linkage evidence.
+        other_issuer = store.resolve_patient(identity(issuer="Clinic B"))
+        assert other_issuer != provisional
+
+
+def test_scoped_mrn_does_not_promote_an_ambiguous_demographic_match(tmp_path):
+    with Store(tmp_path / "saved.sqlite3") as store:
+        first = store.resolve_patient(identity())
+        second = store.resolve_patient(identity(issuer="Clinic B"))
+        provisional = store.resolve_patient(identity(mrn=None, issuer=None))
+        incoming = store.resolve_patient(identity(issuer="Clinic C"))
+        assert len({first, second, provisional, incoming}) == 4
+        pending = next(p for p in store.list_patients() if p["patient_id"] == provisional)
+        assert pending["identifiers"] == []
+
+
 def test_date_index_allows_multiple_encounters_and_multiday_documents(tmp_path):
     with Store(tmp_path / "saved.sqlite3") as store:
         patient = store.resolve_patient(identity())

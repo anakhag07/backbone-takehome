@@ -278,9 +278,11 @@ class Store:
     def resolve_patient(self, identity: dict[str, Any]) -> str:
         """Resolve a scoped MRN or unambiguous exact name/DOB, preserving evidence.
 
-        A new scoped MRN creates a new patient even when demographics happen to
-        match an existing identified patient. Missing issuer makes an MRN
-        unscoped, so it is retained as evidence without a global uniqueness claim.
+        A new scoped MRN can promote a single exact demographic match only when
+        that patient has no scoped identifiers. Already identified patients and
+        ambiguous matches are never merged on demographics alone. Missing issuer
+        makes an MRN unscoped, so it is retained as evidence without a global
+        uniqueness claim.
         """
         name = _value(identity.get("name"))
         dob = _value(identity.get("dob"))
@@ -297,6 +299,7 @@ class Store:
         evidence = _json(identity)
         with self._write():
             patient = None
+            promote_provisional = False
             if issuer and mrn:
                 patient = self.connection.execute(
                     """SELECT p.* FROM patients p JOIN patient_identifiers i
@@ -305,6 +308,19 @@ class Store:
                 ).fetchone()
                 if patient and patient["dob"] and dob and patient["dob"] != dob:
                     raise ValueError("Conflicting DOB for an existing scoped MRN; identity linkage requires review.")
+                if patient is None and normalized_name and dob:
+                    matches = self.connection.execute(
+                        "SELECT * FROM patients WHERE name_key = ? AND dob = ?",
+                        (normalized_name, dob),
+                    ).fetchall()
+                    if len(matches) == 1:
+                        existing_identifier = self.connection.execute(
+                            "SELECT 1 FROM patient_identifiers WHERE patient_id = ? LIMIT 1",
+                            (matches[0]["patient_id"],),
+                        ).fetchone()
+                        if existing_identifier is None:
+                            patient = matches[0]
+                            promote_provisional = True
             elif normalized_name and dob:
                 matches = self.connection.execute(
                     "SELECT * FROM patients WHERE name_key = ? AND dob = ?",
@@ -333,6 +349,11 @@ class Store:
                     name_key = COALESCE(name_key, ?), dob = COALESCE(dob, ?) WHERE patient_id = ?""",
                     (name, normalized_name, dob, patient_id),
                 )
+                if promote_provisional:
+                    self.connection.execute(
+                        "INSERT INTO patient_identifiers(patient_id, issuer, issuer_key, mrn) VALUES (?, ?, ?, ?)",
+                        (patient_id, issuer, issuer_key, mrn),
+                    )
             self.connection.execute(
                 "INSERT OR IGNORE INTO identity_evidence(patient_id, payload_json, created_at) VALUES (?, ?, ?)",
                 (patient_id, evidence, _now()),

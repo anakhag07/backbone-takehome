@@ -97,14 +97,18 @@ def test_question_expands_patient_identifier_and_unknown_headers(settings):
     assert set(client.parsed_sources) == {"A1", "A2", "U1"}
     supplied = {item["source_document_id"] for item in client.answer_contexts[0]["documents"]}
     assert supplied == {"A1", "A2", "U1"}
+    assert set(client.answer_contexts[0]["selection"]["doc_ids"]) == {
+        item["doc_id"] for item in client.answer_contexts[0]["documents"]}
     metric = artifact(result, "execution.json")["questions"][0]
-    assert metric["parsed_documents_percent_before"] == 0
-    assert metric["selected_documents_parsed_percent_before"] == 0
+    assert metric["documents_already_parsed_percent"] == 0
+    assert metric["selected_documents_already_parsed_percent"] == 0
     assert metric["documents_newly_parsed"] == 3
     assert metric["parsed_documents_after"] == 3
     for call in artifact(result, "execution.json")["model_calls"]:
         assert call["question_id"] == "Q1"
-        assert call["stage"] == "question"
+        assert call["stage"] == {"select_documents": "document_selection",
+                                 "parse_document": "deferred_document_parse",
+                                 "answer_from_notes": "question_answer"}[call["operation"]]
 
 
 def test_new_question_reuses_notes_and_exact_offline_replay_uses_no_model(settings):
@@ -121,8 +125,8 @@ def test_new_question_reuses_notes_and_exact_offline_replay_uses_no_model(settin
     assert result.status == "completed", result.error
     assert [call["operation"] for call in client.calls] == ["select_documents", "answer_from_notes"]
     metric = artifact(result, "execution.json")["questions"][0]
-    assert metric["parsed_documents_percent_before"] == 75
-    assert metric["selected_documents_parsed_percent_before"] == 100
+    assert metric["documents_already_parsed_percent"] == 75
+    assert metric["selected_documents_already_parsed_percent"] == 100
     assert metric["documents_newly_parsed"] == 0
 
 

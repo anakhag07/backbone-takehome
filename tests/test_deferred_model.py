@@ -73,6 +73,18 @@ def test_fabricated_notes_are_not_accepted_for_cache():
     assert client.calls[-1]["validation_failed"] is True
 
 
+def test_quotation_wrappers_are_removed_only_when_the_inner_text_matches_source():
+    value = notes()
+    value["facts"][0]["evidence"] = ['"Patient attended from 09:00 to 09:40."']
+    checked = deferred.validate_notes(value, TEXT)
+    quote = checked["facts"][0]["evidence"][0]
+    assert quote == "Patient attended from 09:00 to 09:40."
+    assert checked["source_spans"][quote][0]["line_start"] == 2
+    value["facts"][0]["evidence"] = ['"Patient departed at 10:00."']
+    with pytest.raises(ValueError, match="does not occur"):
+        deferred.validate_notes(value, TEXT)
+
+
 def test_summary_limit_does_not_limit_fact_detail():
     value = notes()
     value["facts"][0]["text"] = "Detailed source interpretation. " * 100

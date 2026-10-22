@@ -147,10 +147,24 @@ def validate_notes(payload: dict, text: str) -> dict:
     """Validate cached/model notes and regenerate quotation locations from the source."""
     candidate = {key: value for key, value in payload.items() if key != "source_spans"}
     checked = DocumentNotes.model_validate(candidate).model_dump(mode="json")
-    checked["source_spans"] = {
-        quote: _source_locations(text, quote)
-        for fact in checked["facts"] for quote in fact["evidence"]
-    }
+    spans = {}
+    for fact in checked["facts"]:
+        for index, quote in enumerate(fact["evidence"]):
+            try:
+                locations = _source_locations(text, quote)
+            except ValueError:
+                # A model may wrap a verbatim excerpt in quotation marks. Remove
+                # only one matching wrapper, and still require a source match.
+                wrapped = quote.strip()
+                if len(wrapped) < 3 or (wrapped[0], wrapped[-1]) not in {
+                    ('"', '"'), ("'", "'"), ("“", "”"), ("‘", "’")
+                }:
+                    raise
+                quote = wrapped[1:-1]
+                locations = _source_locations(text, quote)
+                fact["evidence"][index] = quote
+            spans[quote] = locations
+    checked["source_spans"] = spans
     return checked
 
 

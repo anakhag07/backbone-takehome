@@ -1,6 +1,7 @@
 """Generic notes, source requests, and citation checks without model access."""
 
 from types import SimpleNamespace
+import json
 
 import pytest
 
@@ -32,10 +33,11 @@ def context():
 
 def mock_client(payload):
     captured = []
+    responses = iter(payload) if isinstance(payload, list) else None
 
     def parse(**kwargs):
         captured.append(kwargs)
-        return SimpleNamespace(status="completed", output_parsed=payload,
+        return SimpleNamespace(status="completed", output_parsed=next(responses) if responses else payload,
             model="example-model", id="response-test", output=[], output_text="",
             usage={"input_tokens": 20, "output_tokens": 30})
 
@@ -145,10 +147,34 @@ def test_generic_request_uses_typed_notes_and_existing_usage_reporting():
 
 def test_answer_validation_failure_is_recorded_in_telemetry():
     value = answer(citations=[{"doc_id": "d1", "quote": "Unsupported quote"}])
-    client, _ = mock_client(value)
+    client, captured = mock_client(value)
     with pytest.raises(ModelError, match="source validation"):
         client.answer_from_notes("When did they leave?", context())
     assert client.calls[-1]["validation_failed"] is True
+    assert len(captured) == len(client.calls) == 2
+    assert all(call["failed"] is True for call in client.calls)
+    assert all(call["usage"]["output_tokens"] == 30 for call in client.calls)
+
+
+def test_invalid_citation_is_corrected_once_using_the_same_context():
+    bad = answer(citations=[{"doc_id": "d1", "quote": "Departure was corrected to 09:35."}])
+    good = answer()
+    client, captured = mock_client([bad, good])
+    supplied = context()
+    assert client.answer_from_notes("When did they leave?", supplied) == good
+    assert [call["operation"] for call in client.calls] == ["answer_from_notes", "answer_from_notes_repair"]
+    assert client.calls[0]["failed"] is True
+    assert not client.calls[1].get("failed", False)
+    retried = json.loads(captured[1]["input"])
+    assert retried["context"] == supplied
+    assert retried["rejected_answer"] == bad
+    assert "does not occur" in retried["validation_error"]
+
+
+def test_valid_answer_does_not_make_a_correction_call():
+    client, captured = mock_client(answer())
+    assert client.answer_from_notes("When did they leave?", context()) == answer()
+    assert len(captured) == len(client.calls) == 1
 
 
 def test_answer_prompt_changes_preserve_document_note_cache_identity(monkeypatch):

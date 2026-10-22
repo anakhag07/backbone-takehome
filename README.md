@@ -71,6 +71,8 @@ python main.py "../Backbone_ Building Clinical Intelligence 09.27/questions.json
 
 Model defaults are `gpt-5.6-terra` and `medium`; override with `--model MODEL --effort EFFORT` or `OPENAI_MODEL` / `OPENAI_REASONING_EFFORT`. Effort must be supported by the selected model. `--offline` replays fully cached runs and fails on missing extraction, question-scope, or answer caches; new questions normally need API calls. `--refresh` recomputes model work. See `python main.py --help` for all options.
 
+The default `--max-context-chars` is **400,000 serialized context characters per question**, covering all five supplied questions with the current cached extraction (largest context: 338,515 characters). The command above needs no limit override. Larger contexts fail explicitly without truncating evidence; override the limit for a larger collection if needed. Changing this limit preserves cached document extractions.
+
 ## Output
 
 Each run prints the absolute answer path; progress goes to stderr. Output is grouped by UTC date and time:

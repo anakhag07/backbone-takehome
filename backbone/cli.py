@@ -19,7 +19,8 @@ def main(argv=None) -> int:
                         help="Reasoning effort supported by the selected model")
     parser.add_argument("--offline", action="store_true", help="Use saved extraction, scope, and answer caches only")
     parser.add_argument("--refresh", action="store_true", help="Recompute model work instead of reading caches")
-    parser.add_argument("--max-context-chars", type=int, default=250_000)
+    parser.add_argument("--max-context-chars", type=int, default=400_000,
+                        help="Maximum serialized context characters per question (default: %(default)s)")
     args = parser.parse_args(argv)
     from .pipeline import Settings, run_pipeline
 

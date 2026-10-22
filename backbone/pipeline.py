@@ -34,7 +34,7 @@ class Settings:
     effort: str = "medium"
     offline: bool = False
     refresh: bool = False
-    max_context_chars: int = 250_000
+    max_context_chars: int = 400_000
 
 
 @dataclass(frozen=True)

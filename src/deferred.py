@@ -62,7 +62,14 @@ def _readable_citations(answer, citations):
         matched = list(dict.fromkeys(numbers[ref] for ref in match.group(1).split("\ue202") if ref in numbers))
         return f"[{', '.join(matched)}]" if matched else ""
 
-    return re.sub(r"\ue200cite\ue202([^\ue201]*)\ue201", replace_marker, answer)
+    answer = re.sub(r"\ue200cite\ue202([^\ue201]*)\ue201", replace_marker, answer)
+
+    def replace_xml_marker(match):
+        number = numbers.get(f"{match.group(1)}:{match.group(2)}")
+        return f"[{number}]" if number else ""
+
+    return re.sub(r'<citation\s+doc_id="([^"]+)"\s+evidence_id="([^"]+)"\s*/>',
+                  replace_xml_marker, answer)
 
 
 def run_deferred_pipeline(settings, client=None, progress=None, *, ingest_only=False):

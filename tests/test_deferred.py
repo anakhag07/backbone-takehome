@@ -206,13 +206,18 @@ def test_answer_failure_keeps_parsed_notes_for_retry(settings):
     assert [call["operation"] for call in client.calls] == ["answer_from_notes"]
 
 
-def test_private_citation_markup_is_rendered_as_numbered_source_references(settings):
+@pytest.mark.parametrize("markup", ["private", "xml"])
+def test_private_citation_markup_is_rendered_as_numbered_source_references(settings, markup):
     class MarkedAnswer(FakeDeferredModel):
         def answer_from_notes(self, question, context):
             result = super().answer_from_notes(question, context)
             citation = result["citations"][0]
             key = hashlib.sha256(citation["quote"].encode()).hexdigest()[:16]
-            result["answer"] = f"An observation. \ue200cite\ue202{citation['doc_id']}:e-{key}\ue201"
+            if markup == "xml":
+                result["answer"] = (f'An observation. <citation doc_id="{citation["doc_id"]}" evidence_id="e-{key}"/>'
+                                    '<citation doc_id="unknown" evidence_id="invented"/>')
+            else:
+                result["answer"] = f"An observation. \ue200cite\ue202{citation['doc_id']}:e-{key}\ue201"
             return result
 
     result = run_deferred_pipeline(settings, MarkedAnswer())
@@ -220,6 +225,10 @@ def test_private_citation_markup_is_rendered_as_numbered_source_references(setti
     answer = artifact(result, "answers.json")["answers"][0]
     assert answer["answer"] == "An observation. [1]"
     assert answer["citations"][0]["citation_number"] == 1
+    replay = run_deferred_pipeline(replace(settings, offline=True), FakeDeferredModel())
+    assert replay.status == "completed", replay.error
+    assert artifact(replay, "answers.json")["answers"][0]["answer"] == answer["answer"]
+    assert artifact(replay, "execution.json")["model_calls"] == []
 
 
 def test_removed_documents_stop_contributing_but_history_is_preserved(settings):

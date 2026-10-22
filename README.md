@@ -62,14 +62,14 @@ Text-matched headers → LLM claims → cached patient events, plans, assessment
 
 Eager extracts and reconciles documents upfront; lazy indexes text first, then caches generic notes when questions need them. Eager is the default for lower question-time latency.
 
-Latest local outputs: [eager answers](responses/benchmarks/comparison-2026-10-22-live/eager/2026-10-22/2026-10-22T11-14-21.349286Z-4c80de08/answers.json) · [lazy answers, partial](responses/benchmarks/comparison-2026-10-22-live/lazy-offline-partial/2026-10-22/2026-10-22T11-51-41.028639Z-30ecb927/answers.json). [Full benchmark](docs/benchmark.md#fresh-and-cached-runs) · [Recorded metrics](benchmark-results.json).
+Latest local outputs: [eager answers](responses/benchmarks/comparison-2026-10-22-live/eager/2026-10-22/2026-10-22T11-14-21.349286Z-4c80de08/answers.json) · [lazy answers, partial](responses/benchmarks/comparison-2026-10-22-live/lazy-offline-partial/2026-10-22/2026-10-22T11-51-41.028639Z-30ecb927/answers.json) · [fresh lazy retry, failed](responses/benchmarks/lazy-retry-2026-10-22T12-40-28.558488Z-ebca2d98/cold/2026-10-22/2026-10-22T12-40-42.189924Z-082fa76f/execution-summary.json). [Full benchmark](docs/benchmark.md#fresh-and-cached-runs) · [Recorded metrics](benchmark-results.json).
 
 **Fresh documents — initially empty caches; 31 documents**
 
 | Strategy | Document processing | Patient question, mean | Collection question |
 | --- | ---: | ---: | ---: |
 | Eager | 178.680 s | 12.723 s (5 questions) | 14.714 s |
-| Lazy | 0.061 s, text indexing | Unavailable | Unavailable |
+| Lazy | 0.079 s, text indexing | Failed: HTTP 429 | Not reached |
 
 **Cached documents and answers — exact replay**
 
@@ -78,7 +78,7 @@ Latest local outputs: [eager answers](responses/benchmarks/comparison-2026-10-22
 | Eager | 0.053 s | 0.0075 s (5 questions) | 0.0084 s |
 | Lazy | 0.187 s | 0.0084 s (2 questions) | Unavailable |
 
-Replay reuses saved answers. Lazy runs were incomplete; the collection contains one chart patient, so cross-patient performance is unmeasured.
+The fresh lazy retry failed on its first API request, before document parsing. Replay reuses earlier saved answers; lazy replay remains partial. The collection contains one chart patient, so cross-patient performance is unmeasured.
 
 ## 3. Approach and tradeoffs
 

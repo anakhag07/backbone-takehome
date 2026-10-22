@@ -11,7 +11,7 @@ Measured October 22, 2026 using `gpt-5.6-terra`, reasoning effort `medium`, on 3
 | Strategy | Document processing | Patient question, mean | Collection question |
 | --- | ---: | ---: | ---: |
 | Eager | 178.680 s | 12.723 s (5 questions) | 14.714 s |
-| Lazy | 0.061 s, text indexing | Unavailable | Unavailable |
+| Lazy | 0.079 s, text indexing | Failed: HTTP 429 | Not reached |
 
 **Cached documents and answers — exact replay**
 
@@ -20,11 +20,11 @@ Measured October 22, 2026 using `gpt-5.6-terra`, reasoning effort `medium`, on 3
 | Eager | 0.053 s | 0.0075 s (5 questions) | 0.0084 s |
 | Lazy | 0.187 s | 0.0084 s (2 questions) | Unavailable |
 
-Replay reuses saved answers. Lazy runs were incomplete; the collection contains one chart patient, so cross-patient performance is unmeasured. Cached figures come from eager replay and lazy partial offline replay in [the recorded metrics](../benchmark-results.json).
+The fresh lazy row uses the [latest retry](../responses/benchmarks/lazy-retry-2026-10-22T12-40-28.558488Z-ebca2d98/cold/2026-10-22/2026-10-22T12-40-42.189924Z-082fa76f/execution-summary.json): its first API request returned HTTP 429, before document parsing. Replay reuses earlier saved answers; cached figures remain the eager replay and lazy partial offline replay in [the recorded metrics](../benchmark-results.json). The collection contains one chart patient, so cross-patient performance is unmeasured.
 
 ### New-answer comparison
 
-These are observed phase timings from the runs described below, **not two successful cold end-to-end runs**.
+These are historical phase timings from the earlier runs described below, **not two successful cold end-to-end runs**. The new retry produced no additional answers.
 
 | Measurement | Eager | Deferred (`lazy`) |
 | --- | ---: | ---: |
@@ -48,6 +48,7 @@ Eager completed its cold run in **260.907 s**. Its exact six-question offline re
 | Eager completed cold run | 38 | 6.836 s | 748,371 | 33,477 | $2.12783 |
 | Lazy first cold attempt, failed | 33 | 7.534 s | 68,629 | 34,530 | $0.57262 |
 | Lazy two-answer continuation, then HTTP 429 | 4, including one failed | 12.286 s | 111,434 reported | 5,979 reported | Unknown total; $0.35033 known subtotal |
+| Lazy latest fresh retry, HTTP 429 | 1, failed | 4.941 s | Unreported | Unreported | Unknown |
 
 Eager used 62,940 cached input tokens. The lazy continuation's three successful calls averaged **14.956 s**; its fourth call returned no usage, so the full cost is `null`. A model call is one measured SDK invocation, including SDK retry time; it is not necessarily one HTTP attempt. A question may cause routing, several document readings, answering, an original-source reread, or citation repair. Exact cached answers need no model calls.
 
@@ -58,6 +59,8 @@ Costs are token-based estimates using [published pricing](https://developers.ope
 The first lazy cold run indexed text in 0.061 s, then spent **219.971 s** reading all 31 documents for DEV-01. Its **248.850 s attempted-question duration ended in citation validation failure** and is not a completed-answer latency. A quotation-copy correction attempt also failed. The answer adapter now selects labeled evidence IDs; Python resolves them into source quotations. A second fresh run stopped during document reading because of an added quotation wrapper; deterministic normalization now removes only a matching wrapper whose inner text still occurs in the source.
 
 The repaired implementation reused the first run's 31 valid cached readings and completed DEV-01 and DEV-02. HTTP 429 stopped DEV-03. A later resumed attempt also returned HTTP 429, so further API requests were stopped. Neither a successful cold lazy first-answer latency nor the remaining lazy question latencies have been inferred from these fragments. No runtime estimate is substituted for a measurement.
+
+The requested fresh retry at **12:40 UTC** used an empty database, the same six questions, model and effort, and verified unchanged source hashes. Text indexing took **0.079 s**; the first routing request returned HTTP 429, leaving **0/31 documents parsed and no answers**. The run ended after **5.938 s**; no offline replay was attempted because it had no saved answers. The response metadata did not distinguish rate limits from exhausted quota.
 
 Limited source checks found:
 

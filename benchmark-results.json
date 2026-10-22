@@ -8,14 +8,14 @@
     "id": "BENCH-COLLECTION",
     "question": "For every patient represented in the supplied collection, report the number of eligible patient-present therapy sessions, distinct therapy days, and therapy minutes for January 5–30, 2026, separately by patient. Preserve any unresolved alternatives and cite supporting sources."
   },
-  "method": "One completed eager cold trial plus offline replay. Lazy cold attempts failed validation; later code revisions reused saved notes and produced two uncached answers before repeated HTTP429. Each attempt is retained separately; a partial offline replay verifies those two cached answers. Same augmented question order/model/effort; fresh databases only for runs explicitly labeled cold.",
+  "method": "One completed eager cold trial plus offline replay. Lazy cold attempts failed validation; later code revisions reused saved notes and produced two uncached answers before repeated HTTP429. Each attempt is retained separately; a partial offline replay verifies those two cached answers. Same augmented question order/model/effort; fresh databases only for runs explicitly labeled cold. A requested fresh retry on the current implementation used an empty database and verified unchanged source hashes; its first routing request returned HTTP429 before any document parsing or answers. No replay was attempted for that empty answer cache.",
   "limitations": [
-    "One timing trial per strategy; order, network variation, API prompt caching and model variability affect results.",
+    "One completed eager trial and multiple failed or partial lazy attempts; order, network variation, API prompt caching and model variability affect results.",
     "Cold means an empty application database; provider-side prompt caching is not controlled.",
     "Supplied documents contain one chart patient; the collection question does not measure multi-patient scale.",
     "Eager uses a clinical schema and Python arithmetic; lazy uses generic notes and model reasoning. This is a design comparison, not an isolated scheduling experiment or proof of equal accuracy.",
     "No manually labeled answer benchmark is supplied; output disagreements need review.",
-    "Lazy required citation/quotation fixes and experienced HTTP429. Failed cold attempts and resumed question runs are retained separately; no successful continuous cold lazy end-to-end latency is claimed."
+    "Lazy required citation/quotation fixes and experienced HTTP429. Failed cold attempts and resumed question runs are retained separately; no successful continuous cold lazy end-to-end latency is claimed. The latest fresh retry also returned HTTP429 on its first routing request."
   ],
   "measured_on": "2026-10-22",
   "corpus_manifest": "responses/benchmarks/comparison-2026-10-22-live/comparison.json",
@@ -795,6 +795,119 @@
       },
       "saved_abstraction_bytes": 419330,
       "database_bytes": 589824
+    },
+    {
+      "strategy": "lazy",
+      "cache_state": "cold_attempt_3",
+      "implementation_commit": "cff6ee8a3bb81948868420a1cfa4e2125ba1d1cd",
+      "started_at": "2026-10-22T12:40:42.189924+00:00",
+      "status": "failed",
+      "error": "ModelError: OpenAI select_documents request failed: RateLimitError; HTTP 429; request_id=req_ad4e2ad7dbea46428a17d5b9196d7963. Check API rate limits and available usage budget before retrying.",
+      "summary_path": "responses/benchmarks/lazy-retry-2026-10-22T12-40-28.558488Z-ebca2d98/cold/2026-10-22/2026-10-22T12-40-42.189924Z-082fa76f/execution-summary.json",
+      "answers_path": "responses/benchmarks/lazy-retry-2026-10-22T12-40-28.558488Z-ebca2d98/cold/2026-10-22/2026-10-22T12-40-42.189924Z-082fa76f/answers.json",
+      "retry_metadata_path": "responses/benchmarks/lazy-retry-2026-10-22T12-40-28.558488Z-ebca2d98/retry-metadata.json",
+      "total_seconds": 5.937848208001014,
+      "initial_processing": {
+        "total_seconds": 0.07918133299972396,
+        "timing_scope": "text_index_only",
+        "document_scan_seconds": 0.07918079199953354,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 0.0025542365483781923,
+        "cache_state": "text_only",
+        "new_extraction_count": 0,
+        "average_new_document_extraction_seconds": null,
+        "cached_document_count": 0
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "sample_count": 0,
+          "completed_count": 0,
+          "failed_count": 0,
+          "timed_completed_count": 0,
+          "average_latency_seconds": null,
+          "total_latency_seconds": null,
+          "average_cached_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "collection_wide": {
+          "sample_count": 0,
+          "completed_count": 0,
+          "failed_count": 0,
+          "timed_completed_count": 0,
+          "average_latency_seconds": null,
+          "total_latency_seconds": null,
+          "average_cached_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "unresolved": {
+          "sample_count": 1,
+          "completed_count": 0,
+          "failed_count": 1,
+          "timed_completed_count": 0,
+          "average_latency_seconds": null,
+          "total_latency_seconds": null,
+          "average_cached_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "failed",
+          "cache_hit": false,
+          "scope_type": "unresolved",
+          "active_document_count": 31,
+          "parsed_documents_before": 0,
+          "documents_already_parsed_percent": 0.0,
+          "elapsed_seconds": 5.853185707999728,
+          "parsed_documents_after": 0,
+          "model_call_count": 1,
+          "model_seconds": 4.940815666999697,
+          "selected_documents_already_parsed_percent": null,
+          "attributed_model_call_count": 1,
+          "attributed_model_call_seconds": 4.940815666999697
+        }
+      ],
+      "model_calls": {
+        "count": 1,
+        "failed_count": 1,
+        "timed_count": 1,
+        "average_latency_seconds": 4.940815666999697,
+        "average_successful_latency_seconds": null,
+        "total_latency_seconds": 4.940815666999697,
+        "by_stage": {
+          "document_selection": {
+            "count": 1,
+            "average_latency_seconds": 4.940815666999697
+          }
+        },
+        "usage": {
+          "calls_with_usage": 0,
+          "call_count": 1,
+          "input_tokens": null,
+          "input_tokens_reported_call_count": 0,
+          "cached_input_tokens": null,
+          "cached_input_tokens_reported_call_count": 0,
+          "output_tokens": null,
+          "output_tokens_reported_call_count": 0,
+          "reasoning_tokens": null,
+          "reasoning_tokens_reported_call_count": 0,
+          "total_tokens": null,
+          "total_tokens_reported_call_count": 0
+        },
+        "api_cost_usd": null,
+        "estimated_cost_usd": null,
+        "known_partial_estimated_cost_usd": null,
+        "priced_call_count": 0,
+        "unpriced_call_count": 1,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "estimate_note": "Token-based list-price estimate for gpt-5.6-terra, not an API invoice. Unknown usage/model rates leave the full estimate null; any known subtotal is reported separately.",
+        "cost_note": "No API invoice available; usage retained for separately labeled pricing estimates."
+      },
+      "saved_abstraction_bytes": 25510,
+      "database_bytes": 245760
     }
   ],
   "matched_uncached_questions": {

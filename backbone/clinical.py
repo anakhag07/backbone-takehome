@@ -16,6 +16,7 @@ import math
 
 THERAPY_SERVICES = {"individual", "group", "family"}
 SCENARIO_LIMIT = 4096
+RULE_VERSION = "clinical-v2"
 
 
 def _unique(values):
@@ -113,17 +114,61 @@ def _field_claims(claims, field):
         candidates = [c for c in candidates if c.get("record_kind") not in {"draft", "charge"} and c.get("record_status") != "draft" and (c.get("record_kind") != "schedule" or c.get("attendance") in {"absent", "cancelled"})]
     if field in {"contact_intervals", "presence_intervals", "therapy_intervals", "excluded_intervals", "reported_minutes", "patient_present"}:
         candidates = [c for c in candidates if c.get("record_kind") not in {"schedule", "draft", "charge"} and c.get("record_status") != "draft"]
-    corrections = [c for c in candidates if _corrects(c, field)]
-    if corrections:
-        # A correction is field-scoped. An attached old copy never defeats it.
-        return corrections
     noncopies = [c for c in candidates if not c.get("is_copy") and c.get("record_kind") != "copy"]
     if noncopies:
-        candidates = noncopies
-    finals = [c for c in candidates if c.get("record_status") == "final" and c.get("record_kind") not in {"draft", "charge", "schedule"}]
+        known_values = {json.dumps(c[field], sort_keys=True) for c in noncopies}
+        candidates = [c for c in candidates if c in noncopies or json.dumps(c[field], sort_keys=True) not in known_values]
+    corrections = [c for c in candidates if _corrects(c, field)]
+    bases = [c for c in candidates if not _corrects(c, field)]
+    finals = [c for c in bases if c.get("record_status") == "final" and c.get("record_kind") not in {"draft", "charge", "schedule"}]
     if finals:
-        candidates = finals
-    return candidates
+        bases = finals
+    if not corrections:
+        return bases
+
+    def matches(candidate, target):
+        return target in {candidate.get("doc_id"), candidate.get("source_doc_id")}
+
+    # An unqualified correction applies to this event's named field. A correction
+    # naming a source replaces only that source's assertion, retaining independent
+    # final accounts of the same field. Duplicate copied values were removed above,
+    # while copies containing a different assertion remain evidence to reconcile.
+    retained = [c for c in bases if not any(
+        not correction.get("corrects_document_id")
+        or matches(c, correction["corrects_document_id"])
+        for correction in corrections
+    )]
+    active = [c for c in corrections if not any(
+        other is not c and other.get("corrects_document_id")
+        and matches(c, other["corrects_document_id"])
+        for other in corrections
+    )]
+    if not active:
+        active = [{**c, "_correction_issue": "Circular correction references remain unresolved"} for c in corrections]
+    for correction in active:
+        fields = set(correction.get("corrects_fields", []))
+        partial_presence = field == "presence_intervals" and "presence_intervals" not in fields
+        if not partial_presence:
+            retained.append(correction)
+            continue
+        target = correction.get("corrects_document_id")
+        originals = [c for c in candidates if c is not correction and (not target or matches(c, target)) and not _corrects(c, field)]
+        if not originals:
+            retained.append({**correction, "_correction_issue": "Endpoint correction has no available original interval to verify its unchanged endpoint"})
+            continue
+        change_start = bool(fields & {"arrival", "patient_arrival", "arrival_time"})
+        change_end = bool(fields & {"departure", "patient_departure", "departure_time"})
+        for original in originals:
+            old, update = original[field], correction[field]
+            if len(old) != 1 or len(update) != 1:
+                retained.extend([original, {**correction, "_correction_issue": "Endpoint correction does not uniquely identify one of several presence intervals"}])
+                continue
+            corrected = {
+                "start": update[0]["start"] if change_start else old[0]["start"],
+                "end": update[0]["end"] if change_end else old[0]["end"],
+            }
+            retained.append({**correction, field: [corrected]})
+    return retained
 
 
 def _field_values(claims, field):
@@ -174,6 +219,8 @@ def _duration_options(claims, warnings):
 
 def _reconcile_event(event_id, claims, uncertain_identity=False):
     warnings, decisions = [], []
+    for field in ("attendance", "presence_intervals", "reported_minutes", "contact_intervals", "therapy_intervals", "excluded_intervals"):
+        warnings.extend(c["_correction_issue"] for c in _field_claims(claims, field) if c.get("_correction_issue"))
     dates = sorted({_iso(c.get("service_date")) for c in claims if c.get("service_date")})
     services = _field_values(claims, "service_type") or ["unknown"]
     known_services = [s for s in services if s != "unknown"]
@@ -379,6 +426,8 @@ def calculate_metrics(events, plans, start_date=None, end_date=None):
     episode_starts = [p["episode_start"] for p in plans if p.get("episode_start")]
     episode_ends = [p["episode_end"] for p in plans if p.get("episode_end")]
     dated = [e["date"] for e in events if e.get("date")]
+    available_start = min(episode_starts or dated, default=None)
+    available_end = max(episode_ends or dated, default=None)
     start_date = _iso(start_date) or min(episode_starts or dated, default=None)
     end_date = _iso(end_date) or max(episode_ends or dated, default=None)
     if start_date and end_date and start_date > end_date:
@@ -409,6 +458,10 @@ def calculate_metrics(events, plans, start_date=None, end_date=None):
             metrics = _aggregate(week_events)
             plan, reason = _plan_for_period(plans, period_start, period_end)
             adherence = _adherence(metrics, plan, reason)
+            covered_start = max(monday.isoformat(), available_start) if available_start else period_start
+            covered_end = min(sunday.isoformat(), available_end) if available_end else period_end
+            if adherence["status"] == "not_met" and (period_start > covered_start or period_end < covered_end):
+                adherence.update(status="cannot_determine", reason="The requested date window omits part of this episode week; its subtotal cannot establish full-week noncompliance")
             if any(not e.get("date") and any(s["sessions"] for s in e["scenarios"]) for e in selected) and adherence["status"] == "not_met":
                 adherence.update(status="cannot_determine", reason="Undated eligible events may belong to this week")
             weeks.append({"week_start": monday.isoformat(), "week_end": sunday.isoformat(), "review_start": period_start, "review_end": period_end, "partial_review_week": period_start != monday.isoformat() or period_end != sunday.isoformat(), **metrics, "plan_adherence": adherence})
@@ -469,6 +522,6 @@ def build_abstraction(patient, records):
     events.sort(key=lambda event: (event["date"] or "9999", event["event_id"]))
     plans = _unique(plans)
     observations = _unique(observations)
-    abstraction = {"patient": patient, "events": events, "plans": plans, "assessments": _assessments(assessments), "observations": observations, "warnings": sorted(set(warnings)), "rule_version": "clinical-v1"}
+    abstraction = {"patient": patient, "events": events, "plans": plans, "assessments": _assessments(assessments), "observations": observations, "warnings": sorted(set(warnings)), "rule_version": RULE_VERSION}
     abstraction["metrics"] = calculate_metrics(events, plans)
     return abstraction

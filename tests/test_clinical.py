@@ -179,3 +179,54 @@ def test_one_form_with_conflicting_dates_remains_one_uncertain_assessment():
     result = abstraction([], assessments=[item, {**item, "doc_id": "b", "completed_date": "2026-01-26"}])
     assert len(result["assessments"]) == 1
     assert result["assessments"][0]["completed_date"] is None
+
+
+def test_source_specific_duration_correction_retains_independent_account():
+    a = claim(doc_id="a", source_doc_id="source-a", reported_minutes=50)
+    b = claim(doc_id="b", source_doc_id="source-b", reported_minutes=40)
+    correction = claim(doc_id="c", source_doc_id="source-c", record_kind="correction", reported_minutes=45, corrects_fields=["reported_minutes"], corrects_document_id="source-a")
+    result = abstraction([a, b, correction])
+    assert result["metrics"]["overall"]["minutes"]["alternatives"] == [40, 45]
+
+
+def test_departure_correction_preserves_original_arrival():
+    original = claim(service_type="group", record_kind="attendance", presence_intervals=[interval("10:00", "11:30")])
+    activity = claim(service_type="group", doc_id="activity", therapy_intervals=[interval("10:00", "11:30")])
+    correction = claim(service_type="group", doc_id="correction", record_kind="correction", presence_intervals=[interval("10:15", "11:15")], corrects_fields=["departure"], corrects_document_id="source-1")
+    result = abstraction([original, activity, correction])
+    assert result["metrics"]["overall"]["minutes"]["value"] == 75
+
+
+def test_arrival_correction_preserves_original_departure():
+    original = claim(service_type="group", record_kind="attendance", presence_intervals=[interval("10:00", "11:30")])
+    activity = claim(service_type="group", doc_id="activity", source_doc_id="activity-source", therapy_intervals=[interval("10:00", "11:30")])
+    correction = claim(service_type="group", doc_id="correction", source_doc_id="correction-source", record_kind="correction", presence_intervals=[interval("10:15", "11:15")], corrects_fields=["arrival"], corrects_document_id="source-1")
+    result = abstraction([original, activity, correction])
+    assert result["metrics"]["overall"]["minutes"]["value"] == 75
+
+
+def test_competing_corrections_to_same_source_remain_unresolved():
+    original = claim(reported_minutes=50)
+    corrections = [claim(doc_id=f"correction-{value}", source_doc_id=f"source-{value}", record_kind="correction", reported_minutes=value, corrects_fields=["reported_minutes"], corrects_document_id="source-1") for value in (40, 45)]
+    result = abstraction([original, *corrections])
+    assert result["metrics"]["overall"]["minutes"]["alternatives"] == [40, 45]
+
+
+def test_single_day_window_cannot_establish_full_week_failure():
+    claims = [claim(encounter_id=f"visit-{day}", service_date=f"2026-01-{day}", reported_minutes=50) for day in (19, 20, 21)]
+    result = abstraction(claims, [plan()])
+    scoped = calculate_metrics(result["events"], result["plans"], "2026-01-19", "2026-01-19")
+    assert scoped["overall"]["minutes"]["value"] == 50
+    assert scoped["weeks"][0]["plan_adherence"]["status"] == "cannot_determine"
+
+
+def test_full_final_episode_week_can_establish_failure():
+    result = abstraction([claim(service_date="2026-01-26", reported_minutes=40)], [plan()])
+    last = result["metrics"]["weeks"][-1]
+    assert last["partial_review_week"] is True
+    assert last["plan_adherence"]["status"] == "not_met"
+
+
+def test_copy_with_unique_conflicting_value_is_not_discarded():
+    result = abstraction([claim(reported_minutes=50), claim(doc_id="copied-source", source_doc_id="copy-of-independent-source", record_kind="copy", is_copy=True, reported_minutes=40)])
+    assert result["metrics"]["overall"]["minutes"]["alternatives"] == [40, 50]

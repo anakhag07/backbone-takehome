@@ -240,6 +240,49 @@ def test_error_request_id_rejects_arbitrary_header_or_body_content():
     assert "secret-test-key" not in str(failure.value)
 
 
+@pytest.mark.parametrize("code,from_body,hint", [
+    ("rate_limit_exceeded", False, "throughput"),
+    ("insufficient_quota", True, "quota or billing limit is exhausted"),
+])
+def test_rate_limit_metadata_distinguishes_quota_and_transient_limits(code, from_body, hint):
+    class RateLimitError(Exception):
+        status_code = 429
+
+    error = RateLimitError("Private body with secret-test-key")
+    error.code = None if from_body else code
+    error.body = {"error": {"code": code, "message": "private body"}}
+    error.response = SimpleNamespace(headers={"retry-after": "2.5", "Authorization": "secret-test-key"})
+
+    def fail(**kwargs):
+        raise error
+
+    client = ModelClient("example-model", "medium")
+    original_hash = client.config_hash
+    client._client = SimpleNamespace(responses=SimpleNamespace(parse=fail))
+    with pytest.raises(ModelError) as failure:
+        client.extract_document(TEXT, {})
+    assert client.calls[0]["api_error_code"] == code
+    assert client.calls[0]["retry_after_seconds"] == 2.5
+    assert hint in str(failure.value)
+    assert "secret-test-key" not in repr(client.calls)
+    assert "private body" not in str(failure.value)
+    assert client.config_hash == original_hash
+
+
+@pytest.mark.parametrize("retry_after", ["secret-test-key", "-1", "86401", "1e10", "NaN"])
+def test_failure_metadata_rejects_unknown_codes_and_unbounded_retry_headers(retry_after):
+    from backbone.model import _failure_details
+
+    error = RuntimeError("private body")
+    error.code = "secret-test-key"
+    error.body = {"error": {"code": "private body", "message": "secret-test-key"}}
+    error.response = SimpleNamespace(headers={"retry-after": retry_after})
+    details, message = _failure_details(error)
+    assert "api_error_code" not in details
+    assert "retry_after_seconds" not in details
+    assert "private body" not in message and "secret-test-key" not in message
+
+
 def test_real_sdk_builds_strict_schema_and_decodes_typed_output_offline():
     import httpx
     from openai import OpenAI

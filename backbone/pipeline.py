@@ -17,6 +17,7 @@ from . import clinical
 from .clinical import build_abstraction, calculate_metrics
 from .model import ModelClient, parse_metadata, validate_extraction
 from .models import QuestionAnswer, QuestionPlan
+from .reporting import classify_scope, make_run_id, model_call_stage, write_execution_summary
 from .storage import Store
 
 
@@ -229,7 +230,7 @@ def run_pipeline(settings: Settings, client=None,
     """Write a run bundle even on failure; successful cached work remains reusable."""
     report = progress or (lambda message: None)
     started = datetime.now(timezone.utc)
-    run_id = f"{started.strftime('%H%M%S.%fZ')}-{uuid.uuid4().hex[:8]}"
+    run_id = make_run_id(started)
     folder = settings.responses.resolve() / started.date().isoformat() / run_id
     folder.mkdir(parents=True, exist_ok=False)
     answers_path = folder / "answers.json"
@@ -237,7 +238,8 @@ def run_pipeline(settings: Settings, client=None,
     client = client or ModelClient(settings.model, settings.effort)
     payload = {
         "schema_version": 1,
-        "run": {"id": run_id, "started_at": started.isoformat(), "finished_at": None,
+        "run": {"id": run_id, "answer_id": f"answers-{run_id}", "strategy": "eager",
+                "started_at": started.isoformat(), "finished_at": None,
                 "timestamp_timezone": "UTC", "status": "running",
                 "questions_source": {"path": str(settings.questions.resolve()), "sha256": None},
                 "documents_directory": str(settings.documents.resolve()),
@@ -247,12 +249,14 @@ def run_pipeline(settings: Settings, client=None,
                           "configuration_hash": client.config_hash},
                 "offline": settings.offline, "pipeline_version": PIPELINE_VERSION},
         "answers": [], "errors": [],
-        "artifacts": {"abstraction": "abstraction.json", "execution": "execution.json"},
+        "artifacts": {"abstraction": "abstraction.json", "execution": "execution.json",
+                      "execution_summary": "execution-summary.json"},
     }
-    execution = {"documents": [], "questions": [], "cache": {
+    execution = {"telemetry_version": 2, "documents": [], "questions": [], "cache": {
         "extractions_hit": 0, "extractions_miss": 0, "abstractions_hit": 0, "abstractions_miss": 0, "plans_hit": 0,
         "plans_miss": 0, "answers_hit": 0, "answers_miss": 0}, "model_calls": []}
     abstractions, sources = {}, {}
+    current_question = None
     _write_json(answers_path, payload)
     try:
         if settings.offline and settings.refresh:
@@ -282,7 +286,8 @@ def run_pipeline(settings: Settings, client=None,
                 if doc_id in documents:
                     report(f"{label} [duplicate; reusing extraction]")
                     execution["documents"].append({"path": str(path.resolve()),
-                        "doc_id": doc_id, "status": "duplicate", "model_call": False})
+                        "doc_id": doc_id, "status": "duplicate", "model_call": False,
+                        "elapsed_seconds": time.perf_counter() - document_clock})
                     continue
                 documents[doc_id] = document
                 cached = None if settings.refresh else store.get_extraction(doc_id, client.config_hash)
@@ -292,7 +297,8 @@ def run_pipeline(settings: Settings, client=None,
                     reason = "forced refresh" if settings.refresh else "cache miss"
                     report(f"{label} [extracting with model; {reason}]")
                     metadata.update({"doc_id": doc_id, "source_path": str(path.resolve())})
-                    extraction = validate_extraction(client.extract_document(text, metadata), text)
+                    with model_call_stage(client, "document_intake", doc_id=doc_id):
+                        extraction = validate_extraction(client.extract_document(text, metadata), text)
                     store.save_extraction(doc_id, client.config_hash, extraction)
                 else:
                     execution["cache"]["extractions_hit"] += 1
@@ -308,6 +314,7 @@ def run_pipeline(settings: Settings, client=None,
                     "status": "cached" if cached is not None else "extracted",
                     "elapsed_seconds": time.perf_counter() - document_clock})
             execution["ingestion_seconds"] = time.perf_counter() - extraction_clock
+            execution["active_document_count"] = len(documents)
             report(f"Documents: {execution['cache']['extractions_hit']} cached, "
                    f"{execution['cache']['extractions_miss']} extracted with model")
             report("Reconciling patient records and calculating care totals")
@@ -332,6 +339,8 @@ def run_pipeline(settings: Settings, client=None,
                 abstractions[pid] = abstraction
             if not patients:
                 raise ValueError("The documents did not establish any patient records.")
+            execution["initial_processing_seconds"] = time.perf_counter() - extraction_clock
+            planning_clock = time.perf_counter()
             planning_patients = []
             for patient in patients:
                 abstract = abstractions[patient["patient_id"]]
@@ -346,19 +355,32 @@ def run_pipeline(settings: Settings, client=None,
                 execution["cache"]["plans_miss"] += 1
                 _online(settings, "question scope planning")
                 report("Interpreting question scopes")
-                plan = _validate_plan(client.plan_questions(questions, planning_patients),
-                                      questions, planning_patients)
+                with model_call_stage(client, "scope_planning"):
+                    plan = _validate_plan(client.plan_questions(questions, planning_patients),
+                                          questions, planning_patients)
                 store.save_cache("question_plans", plan_key, plan)
             else:
                 execution["cache"]["plans_hit"] += 1
                 plan = _validate_plan(plan, questions, planning_patients)
+            execution["scope_planning_seconds"] = time.perf_counter() - planning_clock
             scopes = {scope["question_id"]: scope for scope in plan["scopes"]}
             for question in questions:
                 report(f"Answering {question['id']}")
                 question_clock = time.perf_counter()
                 scope = scopes[question["id"]]
+                selected_docs = {doc_id for pid in scope["patient_ids"]
+                                 for doc_id in abstractions[pid]["document_ids"]}
+                current_question = {"question_id": question["id"], "status": "running",
+                    "scope_type": classify_scope(scope, question["question"]),
+                    "parsed_documents_before": len(extractions), "active_document_count": len(documents),
+                    "documents_already_parsed_percent": 100 * len(extractions) / len(documents),
+                    "selected_documents_parsed_before": len(selected_docs),
+                    "selected_document_count": len(selected_docs),
+                    "selected_documents_already_parsed_percent": 100.0 if selected_docs else None}
+                execution["questions"].append(current_question)
                 context = _context(scope, abstractions, sources)
                 context_size = len(json.dumps(context, ensure_ascii=False))
+                current_question["context_characters"] = context_size
                 if context_size > settings.max_context_chars:
                     raise ValueError(f"Question {question['id']} context has {context_size} characters; "
                                      "narrow its scope or increase --max-context-chars. No evidence was truncated.")
@@ -374,7 +396,8 @@ def run_pipeline(settings: Settings, client=None,
                                   "limitations": scope["limitations"]}
                     else:
                         _online(settings, f"answer {question['id']}")
-                        answer = client.answer_question(question["question"], context)
+                        with model_call_stage(client, "question_answer", question_id=question["id"]):
+                            answer = client.answer_question(question["question"], context)
                     answer = _validate_answer(answer, context)
                     store.save_cache("answers", answer_key, answer)
                 else:
@@ -382,11 +405,14 @@ def run_pipeline(settings: Settings, client=None,
                     answer = _validate_answer(answer, context)
                 payload["answers"].append({"question_id": question["id"], "question": question["question"],
                     "scope": scope, **answer, "calculated_results": context["calculations"]})
-                execution["questions"].append({"question_id": question["id"], "cache_hit": hit,
-                    "context_characters": context_size, "elapsed_seconds": time.perf_counter() - question_clock})
+                current_question.update(status="completed", cache_hit=hit,
+                                        elapsed_seconds=time.perf_counter() - question_clock)
+                current_question = None
                 _write_json(answers_path, payload)
         payload["run"]["status"] = "completed"
     except Exception as error:
+        if current_question is not None:
+            current_question.update(status="failed", elapsed_seconds=time.perf_counter() - question_clock)
         payload["run"]["status"] = "failed"
         payload["errors"].append(_safe_error(error))
     finally:
@@ -401,5 +427,6 @@ def run_pipeline(settings: Settings, client=None,
                     "documents": sources, "pipeline_version": PIPELINE_VERSION})
         _write_json(folder / "execution.json", execution)
         _write_json(answers_path, payload)
+        write_execution_summary(folder, execution, payload["run"], payload["answers"])
     return RunResult(answers_path, payload["run"]["status"],
                      payload["errors"][0] if payload["errors"] else None)

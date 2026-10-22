@@ -1,0 +1,28 @@
+# Local environments and Python tooling
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Credentials and local settings
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Generated state; select reviewed submission artifacts explicitly later
+data/local/
+artifacts/local/
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm

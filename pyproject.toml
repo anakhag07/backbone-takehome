@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backbone-takehome"
+version = "0.1.0"
+description = "Persistent, evidence-linked clinical record abstraction prototype"
+requires-python = ">=3.11"
+dependencies = ["openai>=2.8,<3", "pydantic>=2.12,<3"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+backbone = "backbone.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["backbone*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

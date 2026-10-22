@@ -1,6 +1,6 @@
 # Initial system design
 
-This proposal builds on deterministic-first ingestion and reusable extraction. Its main refinement is to separate what a document says from what the system concludes happened. That separation makes duplicate handling, corrections, uncertainty, and numerical answers inspectable.
+This design builds on deterministic-first ingestion and reusable extraction. Its main refinement is to separate what a document says from what the system concludes happened. That separation makes duplicate handling, corrections, uncertainty, and numerical answers inspectable. A first CLI implementation now exists; see the README for runnable commands and explicit limitations. The design below also describes intended extensions beyond that first implementation.
 
 ## Model documents as evidence about events
 
@@ -157,7 +157,7 @@ Meaningful checks for implementation should include duplicate invariance, stabil
 
 ## Prototype scope and experiment
 
-Implement one end-to-end CLI with Python and SQLite before adding distributed infrastructure. Use the supplied corpus to validate semantics; expose paths and settings through configuration. A full implementation is the next phase, not part of this repository initialization.
+The first end-to-end CLI uses Python and SQLite and exposes input/output paths, model settings, refresh, and offline mode. Offline tests validate storage, API request wiring, reconciliation and run outputs; live model behavior on the supplied corpus still needs validation. Template-specific semantic parsing, the final citation/presentation contract, broader plan rules and a measured model comparison remain future work.
 
 ### Model access and reproducibility
 

@@ -12,8 +12,8 @@ def main(argv=None) -> int:
         "Documents default to the documents/ directory beside questions.json."))
     parser.add_argument("questions", type=Path, help="Path to a questions.json file")
     parser.add_argument("--documents", type=Path, help="Directory containing UTF-8 .txt records")
-    parser.add_argument("--strategy", choices=("lazy", "eager"), default="lazy",
-                        help="Defer document parsing until questions need it (default: lazy)")
+    parser.add_argument("--strategy", choices=("eager", "lazy"), default="eager",
+                        help="Process documents upfront (eager) or when needed (lazy); default: %(default)s")
     parser.add_argument("--ingest-only", action="store_true", help="Index documents without model calls (lazy only)")
     parser.add_argument("--db", type=Path, help="Persistent database; defaults to a separate database per strategy")
     parser.add_argument("--response-dir", type=Path, default=Path("responses"))

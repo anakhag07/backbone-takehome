@@ -10,19 +10,17 @@ source .venv/bin/activate
 python -m pip install -r requirements.lock.txt
 export OPENAI_API_KEY="your-api-key"
 
-python main.py "../Backbone_ Building Clinical Intelligence 09.27/questions.json" \
-  --strategy eager --db .backbone/abstraction.sqlite3
+python main.py "../Backbone_ Building Clinical Intelligence 09.27/questions.json"
 ```
 
 Add or update UTF-8 `.txt` files in the document directory and rerun. Keep the complete active collection there. To ask new questions using the saved abstraction:
 
 ```bash
 python main.py /path/to/new_questions.json \
-  --documents "../Backbone_ Building Clinical Intelligence 09.27/documents" \
-  --strategy eager --db .backbone/abstraction.sqlite3
+  --documents "../Backbone_ Building Clinical Intelligence 09.27/documents"
 ```
 
-Question format: `[{"id": "Q1", "question": "..."}]`, with unique IDs. Reuse the same database across restarts. `--offline` requires cached answers; `--refresh` recomputes model work. This experiment branch defaults to `lazy`, so pass `--strategy eager` as shown. Run checks with `python -m pytest -q`.
+Question format: `[{"id": "Q1", "question": "..."}]`, with unique IDs. Eager is the default: documents are processed upfront so later questions can reuse the clinical abstraction. Reuse the same database across restarts. `--offline` requires cached answers; `--refresh` recomputes model work. Run checks with `python -m pytest -q`.
 
 To use the alternate implementation on `experiment/deferred-document-reading`, first index documents without making model calls (no API key needed), then answer questions:
 

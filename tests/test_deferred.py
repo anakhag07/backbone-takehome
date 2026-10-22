@@ -1,6 +1,7 @@
 """Question-triggered parsing, conservative retrieval, and cache recovery offline."""
 
 from dataclasses import replace
+import hashlib
 import json
 
 import pytest
@@ -203,6 +204,22 @@ def test_answer_failure_keeps_parsed_notes_for_retry(settings):
     result = run_deferred_pipeline(settings, client)
     assert result.status == "completed", result.error
     assert [call["operation"] for call in client.calls] == ["answer_from_notes"]
+
+
+def test_private_citation_markup_is_rendered_as_numbered_source_references(settings):
+    class MarkedAnswer(FakeDeferredModel):
+        def answer_from_notes(self, question, context):
+            result = super().answer_from_notes(question, context)
+            citation = result["citations"][0]
+            key = hashlib.sha256(citation["quote"].encode()).hexdigest()[:16]
+            result["answer"] = f"An observation. \ue200cite\ue202{citation['doc_id']}:e-{key}\ue201"
+            return result
+
+    result = run_deferred_pipeline(settings, MarkedAnswer())
+    assert result.status == "completed", result.error
+    answer = artifact(result, "answers.json")["answers"][0]
+    assert answer["answer"] == "An observation. [1]"
+    assert answer["citations"][0]["citation_number"] == 1
 
 
 def test_removed_documents_stop_contributing_but_history_is_preserved(settings):

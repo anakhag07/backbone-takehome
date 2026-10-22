@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 from datetime import datetime, timezone
+import hashlib
 import json
 import re
 import time
@@ -50,6 +51,18 @@ def _check_context(settings, context):
     if size > settings.max_context_chars:
         raise ValueError(f"Question context has {size} characters; increase --max-context-chars. No evidence was truncated.")
     return size
+
+
+def _readable_citations(answer, citations):
+    """Render model-invented private citation markup as numbered source references."""
+    numbers = {f"{item['doc_id']}:e-{hashlib.sha256(item['quote'].encode()).hexdigest()[:16]}": str(i)
+               for i, item in enumerate(citations, 1)}
+
+    def replace_marker(match):
+        matched = list(dict.fromkeys(numbers[ref] for ref in match.group(1).split("\ue202") if ref in numbers))
+        return f"[{', '.join(matched)}]" if matched else ""
+
+    return re.sub(r"\ue200cite\ue202([^\ue201]*)\ue201", replace_marker, answer)
 
 
 def run_deferred_pipeline(settings, client=None, progress=None, *, ingest_only=False):
@@ -219,12 +232,12 @@ def _answer_questions(settings, client, store, questions, catalog, documents, no
             # Always validate final citations against immutable originals, also on cache reuse.
             original_context = {"documents": [{"doc_id": doc_id, "text": documents[doc_id]["text"]} for doc_id in selected]}
             answer = validate_answer(answer, original_context)
-            citations = [{**citation, "source_path": documents[citation["doc_id"]]["source_path"],
+            citations = [{**citation, "citation_number": index, "source_path": documents[citation["doc_id"]]["source_path"],
                           "source_document_id": documents[citation["doc_id"]]["source_doc_id"],
                           "locations": _source_locations(documents[citation["doc_id"]]["text"], citation["quote"])}
-                         for citation in answer["citations"]]
+                         for index, citation in enumerate(answer["citations"], 1)]
             payload["answers"].append({"question_id": question["id"], "question": question["question"],
-                "scope": selection, **answer, "citations": citations})
+                "scope": selection, **answer, "answer": _readable_citations(answer["answer"], citations), "citations": citations})
             measurement["status"] = "completed"
             _write_json(answers_path, payload)
         finally:

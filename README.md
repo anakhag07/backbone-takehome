@@ -1,6 +1,6 @@
 # Backbone take-home
 
-Turn clinical documents into a reusable patient record, then answer a JSON question file. OpenAI extracts clinical claims and writes explanations; Python reconciles encounters and calculates counts, durations, and weekly totals.
+Turn clinical documents into a reusable patient record, then answer a JSON question file. LLM extracts clinical claims and writes explanations; Python reconciles encounters and calculates counts, durations, and weekly totals.
 
 ## Storage design
 

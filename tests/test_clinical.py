@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from backbone.clinical import _adherence, build_abstraction, calculate_metrics, interval_minutes
+from src.clinical import _adherence, build_abstraction, calculate_metrics, interval_minutes
 
 
 def interval(start, end):

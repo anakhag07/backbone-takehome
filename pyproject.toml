@@ -13,10 +13,11 @@ dependencies = ["openai>=2.8,<3", "pydantic>=2.12,<3"]
 test = ["pytest>=8,<10"]
 
 [project.scripts]
-backbone = "backbone.cli:main"
+backbone = "src.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["backbone*"]
+where = ["."]
+include = ["src", "src.*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

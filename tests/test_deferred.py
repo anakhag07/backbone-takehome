@@ -6,9 +6,9 @@ import json
 
 import pytest
 
-from backbone.deferred import run_deferred_pipeline
-from backbone.pipeline import Settings
-from backbone.storage import Store
+from src.deferred import run_deferred_pipeline
+from src.pipeline import Settings
+from src.storage import Store
 
 
 def document(source_id, token, *, name="Alex Example", mrn="A-1"):

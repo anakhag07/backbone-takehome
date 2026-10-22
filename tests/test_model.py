@@ -6,8 +6,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from backbone.model import ModelClient, ModelError, parse_metadata, validate_extraction
-from backbone.models import DocumentExtraction, QuestionAnswer, QuestionPlan
+from src.model import ModelClient, ModelError, parse_metadata, validate_extraction
+from src.models import DocumentExtraction, QuestionAnswer, QuestionPlan
 
 
 TEXT = """Document ID: DOC-1
@@ -271,7 +271,7 @@ def test_rate_limit_metadata_distinguishes_quota_and_transient_limits(code, from
 
 @pytest.mark.parametrize("retry_after", ["secret-test-key", "-1", "86401", "1e10", "NaN"])
 def test_failure_metadata_rejects_unknown_codes_and_unbounded_retry_headers(retry_after):
-    from backbone.model import _failure_details
+    from src.model import _failure_details
 
     error = RuntimeError("private body")
     error.code = "secret-test-key"

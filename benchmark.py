@@ -8,9 +8,9 @@ import os
 from pathlib import Path
 import sys
 
-from backbone.deferred import run_deferred_pipeline
-from backbone.pipeline import Settings, _write_json, load_questions, run_pipeline
-from backbone.reporting import make_run_id
+from src.deferred import run_deferred_pipeline
+from src.pipeline import Settings, _write_json, load_questions, run_pipeline
+from src.reporting import make_run_id
 
 COLLECTION_QUESTION = {
     "id": "BENCH-COLLECTION",

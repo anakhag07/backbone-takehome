@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from backbone.reporting import (classify_scope, make_run_id, model_call_stage,
+from src.reporting import (classify_scope, make_run_id, model_call_stage,
                                 summarize_execution, write_execution_summary)
 
 

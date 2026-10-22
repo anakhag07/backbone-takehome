@@ -37,7 +37,7 @@ python main.py "../Backbone_ Building Clinical Intelligence 09.27/questions.json
 
 ## 2. Clinical abstraction and results
 
-Logical schema, persisted in SQLite; extraction fields are defined in [models.py](backbone/models.py):
+Logical schema, persisted in SQLite; extraction fields are defined in [models.py](src/models.py):
 
 ```text
 documents[doc_id] -> original text, content hash, source metadata
@@ -68,6 +68,6 @@ Run directories now include a full UTC timestamp, for example `responses/2026-10
 
 **Limitations:** intake errors can persist in the cached abstraction; there is no targeted correction-and-invalidation workflow. The schema favors the supplied therapy, plan, and progress questions, so new question types may require new fields and re-extraction. Next, test deliberately incorrect extractions and held-out question types, then add versioned corrections and recompute affected patient records.
 
-**At 500K+ documents:** both `run_pipeline` in [pipeline.py](backbone/pipeline.py) and `run_deferred_pipeline` in [deferred.py](backbone/deferred.py) scan/hash the complete directory and load the active corpus into memory on every run. Use a change manifest and load text by indexed document ID only when needed. Both extraction loops make serial API calls; use bounded workers with rate-limit handling. Lazy `_answer_questions` sends the full catalog for routing, then all selected notes for answering; the 400,000-character guard will reject large contexts. Replace catalog-wide model routing with indexed patient lookup, and use scoped/sharded aggregation with explicit coverage for collection totals. Top-k retrieval alone cannot establish complete counts. SQLite's [single-writer constraint](https://www.sqlite.org/whentouse.html) also matters as concurrent ingestion grows. These are code-based scaling expectations; this scale has not been measured.
+**At 500K+ documents:** both `run_pipeline` in [pipeline.py](src/pipeline.py) and `run_deferred_pipeline` in [deferred.py](src/deferred.py) scan/hash the complete directory and load the active corpus into memory on every run. Use a change manifest and load text by indexed document ID only when needed. Both extraction loops make serial API calls; use bounded workers with rate-limit handling. Lazy `_answer_questions` sends the full catalog for routing, then all selected notes for answering; the 400,000-character guard will reject large contexts. Replace catalog-wide model routing with indexed patient lookup, and use scoped/sharded aggregation with explicit coverage for collection totals. Top-k retrieval alone cannot establish complete counts. SQLite's [single-writer constraint](https://www.sqlite.org/whentouse.html) also matters as concurrent ingestion grows. These are code-based scaling expectations; this scale has not been measured.
 
 **Models and assistance:** `gpt-5.6-terra`, reasoning effort `medium`; configurable with `--model` and `--effort`. Default context guard: 400,000 characters. Codex assisted with planning and coding; Claude assisted with PR reviews. The five supplied question queries averaged **about $0.29 each** in estimated model cost, excluding intake and shared scope planning; see the [benchmark assumptions](docs/benchmark.md).

@@ -4,7 +4,7 @@ import sqlite3
 
 import pytest
 
-from backbone.storage import Store
+from src.storage import Store
 
 
 def identity(**changes):

@@ -5,8 +5,8 @@ import json
 
 import pytest
 
-import backbone.deferred_model as deferred
-from backbone.model import ModelError
+import src.deferred_model as deferred
+from src.model import ModelError
 
 
 TEXT = "Record R1\nPatient attended from 09:00 to 09:40.\nDeparture corrected to 09:35.\n"

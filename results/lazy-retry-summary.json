@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-10-22T12-40-42.189924Z-082fa76f",
+  "status": "failed",
+  "strategy": "lazy",
+  "model": {
+    "provider": "openai",
+    "name": "gpt-5.6-terra",
+    "reasoning_effort": "medium",
+    "configuration_hash": "d4e86a8cccaa869538f4a9795ab4cac8a87e75cb8e05ef1ff9d09d5a24f9a719"
+  },
+  "measurement_kind": "observed",
+  "total_seconds": 5.937848208001014,
+  "initial_processing": {
+    "total_seconds": 0.07918133299972396,
+    "timing_scope": "text_index_only",
+    "document_scan_seconds": 0.07918079199953354,
+    "file_count": 31,
+    "unique_document_count": 31,
+    "average_seconds_per_document": 0.0025542365483781923,
+    "cache_state": "text_only",
+    "new_extraction_count": 0,
+    "average_new_document_extraction_seconds": null,
+    "cached_document_count": 0
+  },
+  "scope_planning_seconds": null,
+  "question_latencies": {
+    "individual_patient": {
+      "sample_count": 0,
+      "completed_count": 0,
+      "failed_count": 0,
+      "timed_completed_count": 0,
+      "average_latency_seconds": null,
+      "total_latency_seconds": null,
+      "average_cached_latency_seconds": null,
+      "average_uncached_latency_seconds": null
+    },
+    "collection_wide": {
+      "sample_count": 0,
+      "completed_count": 0,
+      "failed_count": 0,
+      "timed_completed_count": 0,
+      "average_latency_seconds": null,
+      "total_latency_seconds": null,
+      "average_cached_latency_seconds": null,
+      "average_uncached_latency_seconds": null
+    },
+    "unresolved": {
+      "sample_count": 1,
+      "completed_count": 0,
+      "failed_count": 1,
+      "timed_completed_count": 0,
+      "average_latency_seconds": null,
+      "total_latency_seconds": null,
+      "average_cached_latency_seconds": null,
+      "average_uncached_latency_seconds": null
+    }
+  },
+  "questions": [
+    {
+      "question_id": "DEV-01",
+      "status": "failed",
+      "cache_hit": false,
+      "scope_type": "unresolved",
+      "active_document_count": 31,
+      "parsed_documents_before": 0,
+      "documents_already_parsed_percent": 0.0,
+      "elapsed_seconds": 5.853185707999728,
+      "parsed_documents_after": 0,
+      "model_call_count": 1,
+      "model_seconds": 4.940815666999697,
+      "selected_documents_already_parsed_percent": null,
+      "attributed_model_call_count": 1,
+      "attributed_model_call_seconds": 4.940815666999697
+    }
+  ],
+  "model_calls": {
+    "count": 1,
+    "failed_count": 1,
+    "timed_count": 1,
+    "average_latency_seconds": 4.940815666999697,
+    "average_successful_latency_seconds": null,
+    "total_latency_seconds": 4.940815666999697,
+    "by_stage": {
+      "document_selection": {
+        "count": 1,
+        "average_latency_seconds": 4.940815666999697
+      }
+    },
+    "usage": {
+      "calls_with_usage": 0,
+      "call_count": 1,
+      "input_tokens": null,
+      "input_tokens_reported_call_count": 0,
+      "cached_input_tokens": null,
+      "cached_input_tokens_reported_call_count": 0,
+      "output_tokens": null,
+      "output_tokens_reported_call_count": 0,
+      "reasoning_tokens": null,
+      "reasoning_tokens_reported_call_count": 0,
+      "total_tokens": null,
+      "total_tokens_reported_call_count": 0
+    },
+    "api_cost_usd": null,
+    "estimated_cost_usd": null,
+    "known_partial_estimated_cost_usd": null,
+    "priced_call_count": 0,
+    "unpriced_call_count": 1,
+    "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+    "pricing_as_of": "2026-10-22",
+    "estimate_note": "Token-based list-price estimate for gpt-5.6-terra, not an API invoice. Unknown usage/model rates leave the full estimate null; any known subtotal is reported separately.",
+    "cost_note": "No API invoice available; usage retained for separately labeled pricing estimates."
+  },
+  "saved_abstraction_bytes": 25510,
+  "database_bytes": 245760,
+  "notes": [
+    "Question latency is application wall time for that question; model-call latency measures SDK requests, including any internal retries.",
+    "Shared scope planning is reported separately when measured and is not silently allocated to individual questions.",
+    "Document coverage is the fraction of active unique documents with saved parsing at question start; selected coverage uses that question's selected documents.",
+    "Missing measurements and empty sample averages are null. Usage totals sum reported values; per-field reported-call counts show incomplete telemetry.",
+    "Timings describe this run's cache state and workload, not a statistical benchmark or a 500K-document measurement."
+  ]
+}

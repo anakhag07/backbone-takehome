@@ -20,7 +20,7 @@ Measured October 22, 2026 using `gpt-5.6-terra`, reasoning effort `medium`, on 3
 | Eager | 0.053 s | 0.0075 s (5 questions) | 0.0084 s |
 | Lazy | 0.187 s | 0.0084 s (2 questions) | Unavailable |
 
-The fresh lazy row uses the [latest retry](../responses/benchmarks/lazy-retry-2026-10-22T12-40-28.558488Z-ebca2d98/cold/2026-10-22/2026-10-22T12-40-42.189924Z-082fa76f/execution-summary.json): its first API request returned HTTP 429, before document parsing. Replay reuses earlier saved answers; cached figures remain the eager replay and lazy partial offline replay in [the recorded metrics](../benchmark-results.json). The collection contains one chart patient, so cross-patient performance is unmeasured.
+The fresh lazy row uses the [latest retry](../results/lazy-retry-summary.json): its first API request returned HTTP 429, before document parsing. Replay reuses earlier saved answers; cached figures remain the eager replay and lazy partial offline replay in [the recorded metrics](../benchmark-results.json). The collection contains one chart patient, so cross-patient performance is unmeasured.
 
 ### New-answer comparison
 
@@ -88,4 +88,4 @@ python main.py responses/benchmarks/comparison-2026-10-22-live/benchmark-questio
   --db responses/benchmarks/comparison-2026-10-22-live/lazy.sqlite3
 ```
 
-This reuses all 31 readings and the first two answers. Raw local runs and databases are gitignored. The checked-in JSON preserves compact measured results; each local run has its own `execution-summary.json` with averages, cache percentages, usage, and status.
+This reuses all 31 readings and the first two answers. Selected result snapshots are checked in; their metadata retains original local paths. Other raw runs and databases are gitignored. The benchmark JSON preserves compact measured results; each local run has its own `execution-summary.json` with averages, cache percentages, usage, and status.

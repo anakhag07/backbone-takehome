@@ -62,7 +62,7 @@ Text-matched headers → LLM claims → cached patient events, plans, assessment
 
 Eager extracts and reconciles documents upfront; lazy indexes text first, then caches generic notes when questions need them. Eager is the default for lower question-time latency.
 
-Latest local outputs: [eager answers](responses/benchmarks/comparison-2026-10-22-live/eager/2026-10-22/2026-10-22T11-14-21.349286Z-4c80de08/answers.json) · [lazy answers, partial](responses/benchmarks/comparison-2026-10-22-live/lazy-offline-partial/2026-10-22/2026-10-22T11-51-41.028639Z-30ecb927/answers.json) · [fresh lazy retry, failed](responses/benchmarks/lazy-retry-2026-10-22T12-40-28.558488Z-ebca2d98/cold/2026-10-22/2026-10-22T12-40-42.189924Z-082fa76f/execution-summary.json). [Full benchmark](docs/benchmark.md#fresh-and-cached-runs) · [Recorded metrics](benchmark-results.json).
+Saved result snapshots: [eager answers](results/eager-answers.json) · [lazy answers, partial](results/lazy-answers-partial.json) · [fresh lazy retry, failed](results/lazy-retry-summary.json). [Full benchmark](docs/benchmark.md#fresh-and-cached-runs) · [Recorded metrics](benchmark-results.json).
 
 **Fresh documents — initially empty caches; 31 documents**
 
@@ -84,6 +84,6 @@ The fresh lazy retry failed on its first API request, before document parsing. R
 
 1. **Decision:** Use eager when there is time between document upload and questions. On the same two new questions with documents already parsed, eager averaged **15.27 s** versus lazy's **22.75 s**.
 2. **Limitations:** No automatic semantic correction loop: incorrect or out-of-context extractions can persist. The schema favors current question types; supporting new types may require re-extraction and more question-time LLM processing.
-3. **At one million documents:** SQLite already stores data on disk; its [single-writer limit](https://www.sqlite.org/whentouse.html#high_concurrency) constrains concurrent uploads. Our [full-corpus scan](src/pipeline.py) would touch approximately **32,000× more documents** than this 31-document sample—an operation-count estimate, not measured latency. Replace full-corpus RAM loading with incremental intake and indexed reads; use a server database if write concurrency requires it.
+3. **At one million documents:** SQLite already stores data on disk; its single-writer limit constrains concurrent uploads. Our full-corpus scan would touch approximately **32,000× more documents** than this 31-document sample—an operation-count estimate, not measured latency. Replace full-corpus RAM loading with incremental intake and indexed reads; use a server database if write concurrency requires it.
 
 **Coding assistance:** Codex assisted with design, implementation, tests and documentation; Claude assisted with PR reviews.

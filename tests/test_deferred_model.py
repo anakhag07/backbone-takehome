@@ -31,6 +31,12 @@ def context():
     return {"documents": [{"doc_id": "d1", "notes": deferred.validate_notes(notes(), TEXT)}]}
 
 
+def referenced_answer(quote="Departure corrected to 09:35.", supplied=None, **changes):
+    _, lookup = deferred._reference_context(supplied or context())
+    evidence_id = next(key for key, value in lookup["d1"].items() if value == quote)
+    return answer(citations=[{"doc_id": "d1", "evidence_id": evidence_id}], **changes)
+
+
 def mock_client(payload):
     captured = []
     responses = iter(payload) if isinstance(payload, list) else None
@@ -146,9 +152,9 @@ def test_generic_request_uses_typed_notes_and_existing_usage_reporting():
 
 
 def test_answer_validation_failure_is_recorded_in_telemetry():
-    value = answer(citations=[{"doc_id": "d1", "quote": "Unsupported quote"}])
+    value = answer(citations=[{"doc_id": "d1", "evidence_id": "invented-reference"}])
     client, captured = mock_client(value)
-    with pytest.raises(ModelError, match="source validation"):
+    with pytest.raises(ModelError, match="invented-reference.*d1"):
         client.answer_from_notes("When did they leave?", context())
     assert client.calls[-1]["validation_failed"] is True
     assert len(captured) == len(client.calls) == 2
@@ -157,24 +163,64 @@ def test_answer_validation_failure_is_recorded_in_telemetry():
 
 
 def test_invalid_citation_is_corrected_once_using_the_same_context():
-    bad = answer(citations=[{"doc_id": "d1", "quote": "Departure was corrected to 09:35."}])
-    good = answer()
+    bad = answer(citations=[{"doc_id": "d1", "evidence_id": "invented-reference"}])
+    good = referenced_answer()
     client, captured = mock_client([bad, good])
     supplied = context()
-    assert client.answer_from_notes("When did they leave?", supplied) == good
+    assert client.answer_from_notes("When did they leave?", supplied) == answer()
     assert [call["operation"] for call in client.calls] == ["answer_from_notes", "answer_from_notes_repair"]
     assert client.calls[0]["failed"] is True
     assert not client.calls[1].get("failed", False)
     retried = json.loads(captured[1]["input"])
-    assert retried["context"] == supplied
+    assert retried["context"] == deferred._reference_context(supplied)[0]
     assert retried["rejected_answer"] == bad
-    assert "does not occur" in retried["validation_error"]
+    assert "invented-reference" in retried["validation_error"]
+    assert "d1" in retried["validation_error"]
 
 
 def test_valid_answer_does_not_make_a_correction_call():
-    client, captured = mock_client(answer())
+    client, captured = mock_client(referenced_answer())
     assert client.answer_from_notes("When did they leave?", context()) == answer()
     assert len(captured) == len(client.calls) == 1
+
+
+def test_model_citation_ids_resolve_to_verbatim_quotes_without_duplicate_evidence():
+    supplied = context()
+    original = json.loads(json.dumps(supplied))
+    client, captured = mock_client(referenced_answer())
+    result = client.answer_from_notes("When did they leave?", supplied)
+    assert result["citations"] == answer()["citations"]
+    assert supplied == original
+    model_document = json.loads(captured[0]["input"])["context"]["documents"][0]
+    assert "source_spans" not in model_document["notes"]
+    assert all("evidence" not in fact and fact["evidence_ids"] for fact in model_document["notes"]["facts"])
+    assert len(model_document["evidence_index"]) == 2
+    assert captured[0]["text_format"] is deferred.ReferencedEvidenceAnswer
+
+
+def test_reread_original_lines_are_citable_without_resending_raw_text():
+    supplied = context()
+    supplied["documents"][0]["text"] = TEXT
+    client, captured = mock_client(referenced_answer(quote="Record R1", supplied=supplied))
+    result = client.answer_from_notes("What is the record ID?", supplied)
+    assert result["citations"] == [{"doc_id": "d1", "quote": "Record R1"}]
+    model_document = json.loads(captured[0]["input"])["context"]["documents"][0]
+    assert model_document["original_text_included"] is True
+    assert "text" not in model_document
+    record = next(item for item in model_document["evidence_index"] if item["quote"] == "Record R1")
+    assert record["original_line_numbers"] == [1]
+    assert len(model_document["evidence_index"]) == 3  # original lines reuse matching note excerpts
+
+
+def test_evidence_ids_are_scoped_to_their_document():
+    supplied = context()
+    supplied["documents"].append({"doc_id": "d2", "text": "Other document evidence."})
+    prepared, lookup = deferred._reference_context(supplied)
+    reference = next(iter(lookup["d2"]))
+    invalid = answer(citations=[{"doc_id": "d1", "evidence_id": reference}])
+    with pytest.raises(ValueError, match="d1.*evidence_index"):
+        deferred._resolve_references(invalid, lookup)
+    assert prepared["documents"][1]["original_text_included"] is True
 
 
 def test_answer_prompt_changes_preserve_document_note_cache_identity(monkeypatch):
@@ -201,5 +247,6 @@ def test_generic_schemas_are_strict_required_objects():
             for child in node:
                 check(child)
 
-    for model in (deferred.DocumentNotes, deferred.DocumentSelection, deferred.EvidenceAnswer):
+    for model in (deferred.DocumentNotes, deferred.DocumentSelection, deferred.EvidenceAnswer,
+                  deferred.ReferencedEvidenceAnswer):
         check(model.model_json_schema())

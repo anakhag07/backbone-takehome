@@ -1,0 +1,823 @@
+{
+  "measurement_type": "live_api_experiment_with_failed_attempts_and_cache_resume",
+  "model": "gpt-5.6-terra",
+  "effort": "medium",
+  "document_count": 31,
+  "source_bytes": 50106,
+  "supplemental_question": {
+    "id": "BENCH-COLLECTION",
+    "question": "For every patient represented in the supplied collection, report the number of eligible patient-present therapy sessions, distinct therapy days, and therapy minutes for January 5–30, 2026, separately by patient. Preserve any unresolved alternatives and cite supporting sources."
+  },
+  "method": "One completed eager cold trial plus offline replay. Lazy cold attempts failed validation; later code revisions reused saved notes and produced two uncached answers before repeated HTTP429. Each attempt is retained separately; a partial offline replay verifies those two cached answers. Same augmented question order/model/effort; fresh databases only for runs explicitly labeled cold.",
+  "limitations": [
+    "One timing trial per strategy; order, network variation, API prompt caching and model variability affect results.",
+    "Cold means an empty application database; provider-side prompt caching is not controlled.",
+    "Supplied documents contain one chart patient; the collection question does not measure multi-patient scale.",
+    "Eager uses a clinical schema and Python arithmetic; lazy uses generic notes and model reasoning. This is a design comparison, not an isolated scheduling experiment or proof of equal accuracy.",
+    "No manually labeled answer benchmark is supplied; output disagreements need review.",
+    "Lazy required citation/quotation fixes and experienced HTTP429. Failed cold attempts and resumed question runs are retained separately; no successful continuous cold lazy end-to-end latency is claimed."
+  ],
+  "measured_on": "2026-10-22",
+  "corpus_manifest": "responses/benchmarks/comparison-2026-10-22-live/comparison.json",
+  "runs": [
+    {
+      "strategy": "eager",
+      "cache_state": "cold",
+      "implementation_commit": "dd9f8c3",
+      "status": "completed",
+      "error": null,
+      "summary_path": "responses/benchmarks/comparison-2026-10-22-live/eager/2026-10-22/2026-10-22T11-10-00.414182Z-44acc4e3/execution-summary.json",
+      "total_seconds": 260.90659566700015,
+      "initial_processing": {
+        "total_seconds": 178.68008883400034,
+        "timing_scope": "document_intake_and_initial_abstraction",
+        "document_scan_seconds": 178.61436233400036,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 5.763873833354849,
+        "cache_state": "cold",
+        "new_extraction_count": 31,
+        "average_new_document_extraction_seconds": 5.76129286306452,
+        "cached_document_count": 0
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "completed_count": 5,
+          "failed_count": 0,
+          "average_latency_seconds": 12.723243067000112,
+          "average_uncached_latency_seconds": 12.723243067000112
+        },
+        "collection_wide": {
+          "completed_count": 1,
+          "failed_count": 0,
+          "average_latency_seconds": 14.714331541999854,
+          "average_uncached_latency_seconds": 14.714331541999854
+        },
+        "unresolved": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "completed",
+          "cache_hit": false,
+          "elapsed_seconds": 12.833392542000183,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "DEV-02",
+          "status": "completed",
+          "cache_hit": false,
+          "elapsed_seconds": 17.70468045900043,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "DEV-03",
+          "status": "completed",
+          "cache_hit": false,
+          "elapsed_seconds": 11.076939167000091,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "DEV-04",
+          "status": "completed",
+          "cache_hit": false,
+          "elapsed_seconds": 11.307012750000013,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "DEV-05",
+          "status": "completed",
+          "cache_hit": false,
+          "elapsed_seconds": 10.694190416999845,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "BENCH-COLLECTION",
+          "status": "completed",
+          "cache_hit": false,
+          "elapsed_seconds": 14.714331541999854,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        }
+      ],
+      "model_calls": {
+        "count": 38,
+        "failed_count": 0,
+        "average_latency_seconds": 6.835574638263156,
+        "average_successful_latency_seconds": 6.835574638263156,
+        "api_cost_usd": null,
+        "estimated_cost_usd": 2.1278325000000002,
+        "known_partial_estimated_cost_usd": 2.1278325000000002,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "usage": {
+          "calls_with_usage": 38,
+          "input_tokens": 748371,
+          "cached_input_tokens": 62940,
+          "output_tokens": 33477,
+          "reasoning_tokens": 2604,
+          "total_tokens": 781848
+        }
+      },
+      "saved_abstraction_bytes": 400611,
+      "database_bytes": 688128
+    },
+    {
+      "strategy": "eager",
+      "cache_state": "replay",
+      "implementation_commit": "dd9f8c3",
+      "status": "completed",
+      "error": null,
+      "summary_path": "responses/benchmarks/comparison-2026-10-22-live/eager/2026-10-22/2026-10-22T11-14-21.349286Z-4c80de08/execution-summary.json",
+      "total_seconds": 0.1501341670000329,
+      "initial_processing": {
+        "total_seconds": 0.052748999999948865,
+        "timing_scope": "document_intake_and_initial_abstraction",
+        "document_scan_seconds": 0.04317720799963354,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 0.0017015806451596408,
+        "cache_state": "warm",
+        "new_extraction_count": 0,
+        "average_new_document_extraction_seconds": null,
+        "cached_document_count": 31
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "completed_count": 5,
+          "failed_count": 0,
+          "average_latency_seconds": 0.007453199800056609,
+          "average_uncached_latency_seconds": null
+        },
+        "collection_wide": {
+          "completed_count": 1,
+          "failed_count": 0,
+          "average_latency_seconds": 0.008429250000062893,
+          "average_uncached_latency_seconds": null
+        },
+        "unresolved": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.007670792000226356,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "DEV-02",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.00774962500008769,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "DEV-03",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.007738415999938297,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "DEV-04",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.006547666000187746,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "DEV-05",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.007559499999842956,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        },
+        {
+          "question_id": "BENCH-COLLECTION",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.008429250000062893,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": null
+        }
+      ],
+      "model_calls": {
+        "count": 0,
+        "failed_count": 0,
+        "average_latency_seconds": null,
+        "average_successful_latency_seconds": null,
+        "api_cost_usd": null,
+        "estimated_cost_usd": 0,
+        "known_partial_estimated_cost_usd": 0,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "usage": {
+          "calls_with_usage": 0,
+          "input_tokens": 0,
+          "cached_input_tokens": 0,
+          "output_tokens": 0,
+          "reasoning_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "saved_abstraction_bytes": 400611,
+      "database_bytes": 688128
+    },
+    {
+      "strategy": "lazy",
+      "cache_state": "cold",
+      "implementation_commit": "dd9f8c3",
+      "status": "failed",
+      "error": "ModelError: Answer failed source validation: Citation quotation does not occur in the supplied evidence.",
+      "summary_path": "responses/benchmarks/comparison-2026-10-22-live/lazy/2026-10-22/2026-10-22T11-14-21.532293Z-1da56b8d/execution-summary.json",
+      "total_seconds": 248.91477154199993,
+      "initial_processing": {
+        "total_seconds": 0.06078300000035597,
+        "timing_scope": "text_index_only",
+        "document_scan_seconds": 0.060782417000154965,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 0.0019607419354953537,
+        "cache_state": "text_only",
+        "new_extraction_count": 0,
+        "average_new_document_extraction_seconds": null,
+        "cached_document_count": 0
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "completed_count": 0,
+          "failed_count": 1,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "collection_wide": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "unresolved": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "failed",
+          "cache_hit": false,
+          "elapsed_seconds": 248.8502122089999,
+          "documents_already_parsed_percent": 0.0,
+          "selected_documents_already_parsed_percent": 0.0,
+          "documents_newly_parsed": 31,
+          "deferred_parsing_seconds": 219.97087775,
+          "model_call_count": 33
+        }
+      ],
+      "model_calls": {
+        "count": 33,
+        "failed_count": 1,
+        "average_latency_seconds": 7.533582122424198,
+        "average_successful_latency_seconds": 7.055694265593715,
+        "api_cost_usd": null,
+        "estimated_cost_usd": 0.5726164999999999,
+        "known_partial_estimated_cost_usd": 0.5726164999999999,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "usage": {
+          "calls_with_usage": 33,
+          "input_tokens": 68629,
+          "cached_input_tokens": 0,
+          "output_tokens": 34530,
+          "reasoning_tokens": 1443,
+          "total_tokens": 103159
+        }
+      },
+      "saved_abstraction_bytes": 419330,
+      "database_bytes": 573440
+    },
+    {
+      "strategy": "lazy",
+      "cache_state": "warm_documents_after_failed_attempt",
+      "implementation_commit": "ad29f48",
+      "status": "failed",
+      "error": "ModelError: Answer failed source validation after one correction attempt: Citation quotation does not occur in the supplied evidence.",
+      "summary_path": "responses/benchmarks/comparison-2026-10-22-live/lazy-resume/2026-10-22/2026-10-22T11-26-12.250122Z-b5196193/execution-summary.json",
+      "total_seconds": 35.54571941599988,
+      "initial_processing": {
+        "total_seconds": 0.16205949999994118,
+        "timing_scope": "text_index_only",
+        "document_scan_seconds": 0.16205908299980365,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 0.005227725806449716,
+        "cache_state": "text_only",
+        "new_extraction_count": 0,
+        "average_new_document_extraction_seconds": null,
+        "cached_document_count": 0
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "completed_count": 0,
+          "failed_count": 1,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "collection_wide": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "unresolved": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "failed",
+          "cache_hit": false,
+          "elapsed_seconds": 35.37802308399978,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": 0,
+          "deferred_parsing_seconds": 2.2167000224726507e-05,
+          "model_call_count": 2
+        }
+      ],
+      "model_calls": {
+        "count": 2,
+        "failed_count": 2,
+        "average_latency_seconds": 17.351582729000256,
+        "average_successful_latency_seconds": null,
+        "api_cost_usd": null,
+        "estimated_cost_usd": 0.14973809999999999,
+        "known_partial_estimated_cost_usd": 0.14973809999999999,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "usage": {
+          "calls_with_usage": 2,
+          "input_tokens": 68243,
+          "cached_input_tokens": 33088,
+          "output_tokens": 4603,
+          "reasoning_tokens": 789,
+          "total_tokens": 72846
+        }
+      },
+      "saved_abstraction_bytes": 419330,
+      "database_bytes": 573440
+    },
+    {
+      "strategy": "lazy",
+      "cache_state": "cold_attempt_2",
+      "implementation_commit": "6ee7ab4",
+      "status": "failed",
+      "error": "ModelError: Document notes failed source validation: Evidence quotation does not occur in the source: '\"SYNTHETIC TRAINING RECORD — Entirely fictional patient and organization.\"'",
+      "summary_path": "responses/benchmarks/comparison-2026-10-22-live/lazy-final/2026-10-22/2026-10-22T11-31-29.856390Z-aab0e959/execution-summary.json",
+      "total_seconds": 148.37987674999977,
+      "initial_processing": {
+        "total_seconds": 0.06972450000012032,
+        "timing_scope": "text_index_only",
+        "document_scan_seconds": 0.06972391699991931,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 0.00224917741935872,
+        "cache_state": "text_only",
+        "new_extraction_count": 0,
+        "average_new_document_extraction_seconds": null,
+        "cached_document_count": 0
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "completed_count": 0,
+          "failed_count": 1,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "collection_wide": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "unresolved": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "failed",
+          "cache_hit": false,
+          "elapsed_seconds": 148.30449599999974,
+          "documents_already_parsed_percent": 0.0,
+          "selected_documents_already_parsed_percent": 0.0,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": 21
+        }
+      ],
+      "model_calls": {
+        "count": 21,
+        "failed_count": 1,
+        "average_latency_seconds": 7.024059241857252,
+        "average_successful_latency_seconds": 7.015538264400083,
+        "api_cost_usd": null,
+        "estimated_cost_usd": 0.2953285,
+        "known_partial_estimated_cost_usd": 0.2953285,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "usage": {
+          "calls_with_usage": 21,
+          "input_tokens": 24912,
+          "cached_input_tokens": 0,
+          "output_tokens": 20132,
+          "reasoning_tokens": 269,
+          "total_tokens": 45044
+        }
+      },
+      "saved_abstraction_bytes": 258969,
+      "database_bytes": 438272
+    },
+    {
+      "strategy": "lazy",
+      "cache_state": "warm_documents_after_failed_attempt",
+      "implementation_commit": "a01d76c",
+      "status": "failed",
+      "error": "ModelError: OpenAI select_documents request failed: RateLimitError; HTTP 429; request_id=req_6df1c42c38fc407b996017a8c3864436. Check API rate limits and available usage budget before retrying.",
+      "summary_path": "responses/benchmarks/comparison-2026-10-22-live/lazy-completed/2026-10-22/2026-10-22T11-39-54.295686Z-00bb01b6/execution-summary.json",
+      "total_seconds": 49.932143374999214,
+      "initial_processing": {
+        "total_seconds": 0.15424799999982497,
+        "timing_scope": "text_index_only",
+        "document_scan_seconds": 0.1542475829992327,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 0.004975741935478225,
+        "cache_state": "text_only",
+        "new_extraction_count": 0,
+        "average_new_document_extraction_seconds": null,
+        "cached_document_count": 0
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "completed_count": 2,
+          "failed_count": 0,
+          "average_latency_seconds": 22.74809208350007,
+          "average_uncached_latency_seconds": 22.74809208350007
+        },
+        "collection_wide": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "unresolved": {
+          "completed_count": 0,
+          "failed_count": 1,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "completed",
+          "cache_hit": false,
+          "elapsed_seconds": 18.092145249999703,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": 0,
+          "deferred_parsing_seconds": 1.516700012871297e-05,
+          "model_call_count": 1
+        },
+        {
+          "question_id": "DEV-02",
+          "status": "completed",
+          "cache_hit": false,
+          "elapsed_seconds": 27.404038917000435,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": 0,
+          "deferred_parsing_seconds": 8.666000212542713e-06,
+          "model_call_count": 2
+        },
+        {
+          "question_id": "DEV-03",
+          "status": "failed",
+          "cache_hit": false,
+          "elapsed_seconds": 4.276799915999618,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": null,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": 1
+        }
+      ],
+      "model_calls": {
+        "count": 4,
+        "failed_count": 1,
+        "average_latency_seconds": 12.28576488549993,
+        "average_successful_latency_seconds": 14.955665333333249,
+        "api_cost_usd": null,
+        "estimated_cost_usd": null,
+        "known_partial_estimated_cost_usd": 0.35032850000000004,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "usage": {
+          "calls_with_usage": 3,
+          "input_tokens": 111434,
+          "cached_input_tokens": 0,
+          "output_tokens": 5979,
+          "reasoning_tokens": 1113,
+          "total_tokens": 117413
+        }
+      },
+      "saved_abstraction_bytes": 419330,
+      "database_bytes": 589824
+    },
+    {
+      "strategy": "lazy",
+      "cache_state": "warm_documents_two_answers_cached_after_429",
+      "implementation_commit": "29843e9",
+      "status": "failed",
+      "error": "ModelError: OpenAI select_documents request failed: RateLimitError; HTTP 429; request_id=req_bbab6af10f2d42c8a25197eaa824a0ee. Check API rate limits and available usage budget before retrying.",
+      "summary_path": "responses/benchmarks/comparison-2026-10-22-live/lazy-resumed-after-429/2026-10-22/2026-10-22T11-50-05.379032Z-8fb60d40/execution-summary.json",
+      "total_seconds": 4.445730875000663,
+      "initial_processing": {
+        "total_seconds": 0.15215470800012554,
+        "timing_scope": "text_index_only",
+        "document_scan_seconds": 0.15215416600040044,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 0.004908216387100824,
+        "cache_state": "text_only",
+        "new_extraction_count": 0,
+        "average_new_document_extraction_seconds": null,
+        "cached_document_count": 0
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "completed_count": 2,
+          "failed_count": 0,
+          "average_latency_seconds": 0.007860208500005683,
+          "average_uncached_latency_seconds": null
+        },
+        "collection_wide": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "unresolved": {
+          "completed_count": 0,
+          "failed_count": 1,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.0073801250000542495,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": 0,
+          "deferred_parsing_seconds": 1.595899993844796e-05,
+          "model_call_count": 0
+        },
+        {
+          "question_id": "DEV-02",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.008340291999957117,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": 0,
+          "deferred_parsing_seconds": 4.1249995774705894e-06,
+          "model_call_count": 0
+        },
+        {
+          "question_id": "DEV-03",
+          "status": "failed",
+          "cache_hit": false,
+          "elapsed_seconds": 4.271991708000314,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": null,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": 1
+        }
+      ],
+      "model_calls": {
+        "count": 1,
+        "failed_count": 1,
+        "average_latency_seconds": 3.704107292000117,
+        "average_successful_latency_seconds": null,
+        "api_cost_usd": null,
+        "estimated_cost_usd": null,
+        "known_partial_estimated_cost_usd": null,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "usage": {
+          "calls_with_usage": 0,
+          "input_tokens": null,
+          "cached_input_tokens": null,
+          "output_tokens": null,
+          "reasoning_tokens": null,
+          "total_tokens": null
+        }
+      },
+      "saved_abstraction_bytes": 419330,
+      "database_bytes": 589824
+    },
+    {
+      "strategy": "lazy",
+      "cache_state": "partial_offline_replay",
+      "implementation_commit": "9fd1fa5",
+      "status": "failed",
+      "error": "ValueError: Offline cache miss for document selection for DEV-03; run once with API access first.",
+      "summary_path": "responses/benchmarks/comparison-2026-10-22-live/lazy-offline-partial/2026-10-22/2026-10-22T11-51-41.028639Z-30ecb927/execution-summary.json",
+      "total_seconds": 0.20885470800021722,
+      "initial_processing": {
+        "total_seconds": 0.1866018749997238,
+        "timing_scope": "text_index_only",
+        "document_scan_seconds": 0.18660141700001986,
+        "file_count": 31,
+        "unique_document_count": 31,
+        "average_seconds_per_document": 0.006019415322571736,
+        "cache_state": "text_only",
+        "new_extraction_count": 0,
+        "average_new_document_extraction_seconds": null,
+        "cached_document_count": 0
+      },
+      "question_latencies": {
+        "individual_patient": {
+          "completed_count": 2,
+          "failed_count": 0,
+          "average_latency_seconds": 0.008379562500522297,
+          "average_uncached_latency_seconds": null
+        },
+        "collection_wide": {
+          "completed_count": 0,
+          "failed_count": 0,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        },
+        "unresolved": {
+          "completed_count": 0,
+          "failed_count": 1,
+          "average_latency_seconds": null,
+          "average_uncached_latency_seconds": null
+        }
+      },
+      "questions": [
+        {
+          "question_id": "DEV-01",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.008547500000531727,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": 0,
+          "deferred_parsing_seconds": 4.12500003221794e-05,
+          "model_call_count": 0
+        },
+        {
+          "question_id": "DEV-02",
+          "status": "completed",
+          "cache_hit": true,
+          "elapsed_seconds": 0.008211625000512868,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": 100.0,
+          "documents_newly_parsed": 0,
+          "deferred_parsing_seconds": 3.791999915847555e-06,
+          "model_call_count": 0
+        },
+        {
+          "question_id": "DEV-03",
+          "status": "failed",
+          "cache_hit": false,
+          "elapsed_seconds": 0.0002912499994636164,
+          "documents_already_parsed_percent": 100.0,
+          "selected_documents_already_parsed_percent": null,
+          "documents_newly_parsed": null,
+          "deferred_parsing_seconds": null,
+          "model_call_count": 0
+        }
+      ],
+      "model_calls": {
+        "count": 0,
+        "failed_count": 0,
+        "average_latency_seconds": null,
+        "average_successful_latency_seconds": null,
+        "api_cost_usd": null,
+        "estimated_cost_usd": 0,
+        "known_partial_estimated_cost_usd": 0,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "pricing_as_of": "2026-10-22",
+        "usage": {
+          "calls_with_usage": 0,
+          "input_tokens": 0,
+          "cached_input_tokens": 0,
+          "output_tokens": 0,
+          "reasoning_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "saved_abstraction_bytes": 419330,
+      "database_bytes": 589824
+    }
+  ],
+  "matched_uncached_questions": {
+    "question_ids": [
+      "DEV-01",
+      "DEV-02"
+    ],
+    "eager_average_seconds": 15.269036500500306,
+    "lazy_average_seconds": 22.74809208350007,
+    "documents_already_parsed_percent": 100,
+    "note": "Two observed uncached answers per strategy; eager shared batch scope planning is separate, while lazy includes routing with DEV-01 routing already cached. This is not a successful cold end-to-end comparison."
+  },
+  "unmeasured": [
+    "Successful continuous cold lazy end-to-end and first-question latency",
+    "Lazy DEV-03, DEV-04, DEV-05 and supplemental collection completed-answer latency",
+    "500K+ documents throughput or cost",
+    "Calibrated accuracy score or billed API cost"
+  ],
+  "quality_spotchecks": [
+    "Both observed strategies report 12 sessions and 11 days, preserve Jan 26 as one encounter with 40/50-minute alternatives, and treat Jan 21 interrupted contact as one 45-minute encounter.",
+    "Eager incorrectly creates Casey, the partner, as a separate chart patient in its collection output. The lazy collection answer was not reached, so that result cannot be compared.",
+    "Lazy derives 60 group minutes on Jan 19, or 90 minutes for the day, from the scheduled session window, corrected attendance and break. Eager leaves the group duration unknown. This requires review of the activity-window assumption, rather than establishing an indisputable arithmetic error.",
+    "The eager PHQ-9 spotcheck matches scores 18, 14 and 10. Lazy DEV-05 is unavailable.",
+    "These are limited source-based spotchecks, not a hand-labeled accuracy benchmark."
+  ]
+}

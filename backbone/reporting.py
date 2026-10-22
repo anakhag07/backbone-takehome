@@ -166,7 +166,7 @@ def summarize_execution(execution: dict, run_metadata: dict, answers: list[dict]
         "total_seconds": execution.get("total_seconds"),
         "initial_processing": {
             "total_seconds": initial,
-            "timing_scope": "document_intake_and_initial_abstraction" if "initial_processing_seconds" in execution else "document_intake_only_legacy_measurement",
+            "timing_scope": ("text_index_only" if run_metadata.get("strategy") == "lazy" else "document_intake_and_initial_abstraction") if "initial_processing_seconds" in execution else "document_intake_only_legacy_measurement",
             "document_scan_seconds": execution.get("ingestion_seconds"),
             "file_count": len(documents), "unique_document_count": unique_count,
             "average_seconds_per_document": initial / unique_count if _number(initial) and unique_count else None,

@@ -26,7 +26,7 @@ def run_benchmark(questions_path, documents, output, model, effort, max_context_
     augmented = output / "benchmark-questions.json"
     _write_json(augmented, questions + [COLLECTION_QUESTION])
     manifest = [{"path": str(p.resolve()), "sha256": hashlib.sha256(p.read_bytes()).hexdigest(),
-                 "bytes": p.stat().st_size} for p in sorted(documents.rglob("*.txt"))]
+                 "bytes": p.stat().st_size} for p in sorted(documents.rglob("*")) if p.is_file() and p.suffix.lower() == ".txt"]
     comparison = {"measurement_type": "single_trial_live_api", "model": model, "effort": effort,
         "source_questions": {"path": str(questions_path), "sha256": questions_hash},
         "documents": manifest, "document_count": len(manifest), "source_bytes": sum(d["bytes"] for d in manifest),

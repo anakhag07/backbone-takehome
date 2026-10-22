@@ -14,7 +14,6 @@ build/
 # Credentials and local settings
 .env
 .env.*
-!.env.example
 .DS_Store
 
 # Generated state; select reviewed submission artifacts explicitly later

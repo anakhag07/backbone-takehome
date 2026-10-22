@@ -207,6 +207,21 @@ def _failure_details(error: Exception) -> tuple[dict, str]:
     request_id = _request_id(getattr(error, "request_id", None))
     if request_id:
         details["request_id"] = request_id
+    allowed_codes = {"rate_limit_exceeded", "insufficient_quota", "billing_hard_limit_reached"}
+    code = getattr(error, "code", None)
+    if not isinstance(code, str) or code not in allowed_codes:
+        body = getattr(error, "body", None)
+        if isinstance(body, dict):
+            body = body.get("error", body)
+        code = body.get("code") if isinstance(body, dict) else None
+    if isinstance(code, str) and code in allowed_codes:
+        details["api_error_code"] = code
+    headers = getattr(getattr(error, "response", None), "headers", None)
+    retry_after = headers.get("retry-after") if hasattr(headers, "get") else None
+    if isinstance(retry_after, str) and re.fullmatch(r"\d{1,5}(?:\.\d{1,6})?", retry_after.strip()):
+        seconds = float(retry_after.strip())
+        if 0 <= seconds <= 86_400:
+            details["retry_after_seconds"] = seconds
     explanations = {
         400: "Check the model, reasoning effort, and structured-output schema.",
         401: "Check the API key configured in your local environment.",
@@ -218,6 +233,10 @@ def _failure_details(error: Exception) -> tuple[dict, str]:
         429: "Check API rate limits and available usage budget before retrying.",
     }
     hint = explanations.get(status, "")
+    if details.get("api_error_code") in {"insufficient_quota", "billing_hard_limit_reached"}:
+        hint = "The API project's quota or billing limit is exhausted; review its usage budget before retrying."
+    elif details.get("api_error_code") == "rate_limit_exceeded":
+        hint = "The API reported a rate limit; reduce request/token throughput and retry after the limit resets."
     if not hint and isinstance(status, int) and status >= 500:
         hint = "The API reported a service error; retry later."
     if not hint and "Timeout" in type(error).__name__:
@@ -231,6 +250,10 @@ def _failure_details(error: Exception) -> tuple[dict, str]:
         tokens.append(f"HTTP {details['http_status']}")
     if request_id:
         tokens.append(f"request_id={request_id}")
+    if "api_error_code" in details:
+        tokens.append(f"code={details['api_error_code']}")
+    if "retry_after_seconds" in details:
+        tokens.append(f"retry_after_seconds={details['retry_after_seconds']:g}")
     return details, "; ".join(tokens) + (f". {hint}" if hint else "")
 
 

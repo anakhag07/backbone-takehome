@@ -9,8 +9,8 @@ import sys
 
 import pytest
 
-from backbone.pipeline import Settings, load_questions, run_pipeline
-from backbone.storage import Store
+from src.pipeline import Settings, load_questions, run_pipeline
+from src.storage import Store
 
 
 TEXT = """Document ID: TEST-1

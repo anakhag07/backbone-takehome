@@ -207,14 +207,23 @@ def _failure_details(error: Exception) -> tuple[dict, str]:
     request_id = _request_id(getattr(error, "request_id", None))
     if request_id:
         details["request_id"] = request_id
-    allowed_codes = {"rate_limit_exceeded", "insufficient_quota", "billing_hard_limit_reached"}
+    code_hints = {
+        "rate_limit_exceeded": "The API reported a rate limit; reduce request/token throughput and retry after the limit resets.",
+        "slow_down": "The API reported a traffic increase limit; follow Retry-After and increase request throughput gradually.",
+        "insufficient_quota": "The API project's quota or billing limit is exhausted; review its usage budget before retrying.",
+        "billing_hard_limit_reached": "The API project's quota or billing limit is exhausted; review its usage budget before retrying.",
+        "credit_balance_exhausted": "The API organization's prepaid credits are exhausted; add credits in API billing settings before retrying.",
+        "organization_spend_limit_exceeded": "The API organization's spend limit is reached; review its spend limit before retrying.",
+        "project_spend_limit_exceeded": "The API project's spend limit is reached; review its spend limit before retrying.",
+        "organization_usage_limit_exceeded": "The API organization's approved usage limit is reached; request a higher limit before retrying.",
+    }
     code = getattr(error, "code", None)
-    if not isinstance(code, str) or code not in allowed_codes:
+    if not isinstance(code, str) or code not in code_hints:
         body = getattr(error, "body", None)
         if isinstance(body, dict):
             body = body.get("error", body)
         code = body.get("code") if isinstance(body, dict) else None
-    if isinstance(code, str) and code in allowed_codes:
+    if isinstance(code, str) and code in code_hints:
         details["api_error_code"] = code
     headers = getattr(getattr(error, "response", None), "headers", None)
     retry_after = headers.get("retry-after") if hasattr(headers, "get") else None
@@ -232,11 +241,7 @@ def _failure_details(error: Exception) -> tuple[dict, str]:
         422: "The request parameters could not be processed; check the schema and settings.",
         429: "Check API rate limits and available usage budget before retrying.",
     }
-    hint = explanations.get(status, "")
-    if details.get("api_error_code") in {"insufficient_quota", "billing_hard_limit_reached"}:
-        hint = "The API project's quota or billing limit is exhausted; review its usage budget before retrying."
-    elif details.get("api_error_code") == "rate_limit_exceeded":
-        hint = "The API reported a rate limit; reduce request/token throughput and retry after the limit resets."
+    hint = code_hints.get(details.get("api_error_code"), explanations.get(status, ""))
     if not hint and isinstance(status, int) and status >= 500:
         hint = "The API reported a service error; retry later."
     if not hint and "Timeout" in type(error).__name__:

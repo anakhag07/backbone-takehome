@@ -62,7 +62,7 @@ Text-matched headers → LLM claims → cached patient events, plans, assessment
 
 Eager extracts and reconciles documents upfront; lazy indexes text first, then caches generic notes when questions need them. Eager is the default for lower question-time latency.
 
-Saved result snapshots: [eager answers](results/eager-answers.json) · [lazy answers, partial](results/lazy-answers-partial.json) · [fresh lazy retry, failed](results/lazy-retry-summary.json). [Full benchmark](docs/benchmark.md#fresh-and-cached-runs) · [Recorded metrics](benchmark-results.json).
+Saved result snapshots: [eager answers](results/eager-answers.json) · [lazy answers](results/lazy-answers-partial.json) · [full benchmark](docs/benchmark.md#fresh-and-cached-runs) · [recorded metrics](benchmark-results.json).
 
 **Fresh documents — initially empty caches; 31 documents**
 
@@ -78,7 +78,7 @@ Saved result snapshots: [eager answers](results/eager-answers.json) · [lazy ans
 | Eager | 0.053 s | 0.0075 s (5 questions) | 0.0084 s |
 | Lazy | 0.187 s | 0.0084 s (2 questions) | Unavailable |
 
-The fresh lazy retry failed on its first API request, before document parsing. Replay reuses earlier saved answers; lazy replay remains partial. The collection contains one chart patient, so cross-patient performance is unmeasured.
+The fresh lazy retry failed before document parsing; a follow-up API diagnostic confirmed exhausted credits. Replay reuses earlier saved answers; lazy replay remains partial. The collection contains one chart patient, so cross-patient performance is unmeasured.
 
 ## 3. Approach and tradeoffs
 

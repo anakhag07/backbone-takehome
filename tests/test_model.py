@@ -243,6 +243,13 @@ def test_error_request_id_rejects_arbitrary_header_or_body_content():
 @pytest.mark.parametrize("code,from_body,hint", [
     ("rate_limit_exceeded", False, "throughput"),
     ("insufficient_quota", True, "quota or billing limit is exhausted"),
+    ("billing_hard_limit_reached", True, "quota or billing limit is exhausted"),
+    ("credit_balance_exhausted", False, "prepaid credits are exhausted"),
+    ("credit_balance_exhausted", True, "add credits in API billing settings"),
+    ("organization_spend_limit_exceeded", True, "organization's spend limit"),
+    ("project_spend_limit_exceeded", False, "project's spend limit"),
+    ("organization_usage_limit_exceeded", True, "request a higher limit"),
+    ("slow_down", False, "follow Retry-After"),
 ])
 def test_rate_limit_metadata_distinguishes_quota_and_transient_limits(code, from_body, hint):
     class RateLimitError(Exception):

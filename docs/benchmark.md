@@ -62,6 +62,8 @@ The repaired implementation reused the first run's 31 valid cached readings and 
 
 The requested fresh retry at **12:40 UTC** used an empty database, the same six questions, model and effort, and verified unchanged source hashes. Text indexing took **0.079 s**; the first routing request returned HTTP 429, leaving **0/31 documents parsed and no answers**. The run ended after **5.938 s**; no offline replay was attempted because it had no saved answers. The response metadata did not distinguish rate limits from exhausted quota.
 
+A separate minimal API diagnostic at **12:49 UTC**, with automatic retries disabled, returned **`credit_balance_exhausted`**: the API organization had no prepaid credits remaining. The logger did not recognize this code; it now preserves the code and explains the remedy. Adding API credits is required before retrying. This diagnostic is recorded separately in `benchmark-results.json` and is not a benchmark trial.
+
 Limited source checks found:
 
 - Both observed strategies report 12 sessions and 11 days, retain Jan 26 as one encounter with 40/50-minute alternatives, and count Jan 21's interrupted contact as one 45-minute encounter.
